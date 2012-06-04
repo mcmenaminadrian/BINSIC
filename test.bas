@@ -1,3 +1,6 @@
 REM Simple BASIC code
 
-PRINT "Hello Binsic World", 2 + 9
+LET x = 5
+PRINT "Hello Binsic World: x is ", x
+LET x = x + 10
+PRINT "x is now ", x

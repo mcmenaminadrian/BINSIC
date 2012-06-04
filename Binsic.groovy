@@ -20,7 +20,6 @@ class BinsicEngine{
 	}
 }
 
-	
 	def engine = new BinsicEngine()
 	BinsicInterpreter.setTextArea(engine.binsicWindow.screenZX)
 	def conf = new CompilerConfiguration()
