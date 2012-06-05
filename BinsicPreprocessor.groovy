@@ -9,8 +9,10 @@ class BinsicPreprocessor {
 	def basicIn
 	def binsicOut
 	
-	def commands = ["PRINT", "REM", "LET"]
-	def processedCommands = ["printIt", "//", ""]
+	def commands = ["PRINT", "REM", "LET", "FAST", "SLOW",
+		"POKE", "PEEK", "USR", "CLS"]
+	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
+		"//POKE", "//PEEK", "//USR", "cls()" ]
 	
 	BinsicPreprocessor(def name)
 	{

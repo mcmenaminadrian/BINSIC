@@ -13,6 +13,12 @@ abstract class BinsicInterpreter extends Script {
 		param.each {
 			textArea.append "$it"
 		}
+		textArea.append "\n"
+	}
+	
+	def cls()
+	{
+		textArea.write("")
 	}
 	
 
