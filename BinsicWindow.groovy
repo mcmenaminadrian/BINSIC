@@ -1,4 +1,4 @@
-package Binsic
+package binsic
 
 import groovy.swing.SwingBuilder
 import java.awt.Font

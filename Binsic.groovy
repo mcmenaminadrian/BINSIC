@@ -1,5 +1,5 @@
-#!/usr/bin/env groovy
-package Binsic
+package binsic
+
 import org.codehaus.groovy.control.*
 
 /* 
@@ -13,21 +13,41 @@ class BinsicEngine{
 	
 	def binsicWindow
 	def binsicInterpreter
+	def preProc
+	def conf
+	def shell
+	def basic
 	
 	BinsicEngine()
 	{
 		binsicWindow = new BinsicWindow(this)
 	}
+	
+	def getTo(def lineNo)
+	{
+		def fileLine = preProc.lineMap.get("$lineNo")
+		preProc.reStart(basic, fileLine as Integer)
+		shell.evaluate(preProc.binsicOut)
+	}
+	
+	def process(def name)
+	{
+		basic = name
+		BinsicInterpreter.setTextArea(binsicWindow.screenZX)
+		BinsicInterpreter.setEngine(this)
+		conf = new CompilerConfiguration()
+		conf.setScriptBaseClass("BinsicInterpreter")
+		shell = new GroovyShell(conf)
+		preProc = BinsicPreprocessor.getCurrentPreproc()
+		preProc.startUp(basic)
+		shell.evaluate(preProc.binsicOut)
+	}
 }
 
+if (args) {
 	def engine = new BinsicEngine()
-	BinsicInterpreter.setTextArea(engine.binsicWindow.screenZX)
-	def conf = new CompilerConfiguration()
-	conf.setScriptBaseClass("BinsicInterpreter")
-	def shell = new GroovyShell(conf)
-	def preProc = new BinsicPreprocessor("./src/Binsic/test.bas")
-	shell.evaluate(preProc.binsicOut)
-/*}
+	engine.process(args[0])
+}
 else
 	println "Usage: Binsic <BASIC script>"
-*/
+
