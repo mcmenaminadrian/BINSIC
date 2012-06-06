@@ -20,6 +20,8 @@ abstract class BinsicInterpreter extends Script {
 			textArea.append "$it"
 		}
 		textArea.append "\n"
+		def rect = textArea.modelToView(textArea.getDocument().getLength() - 1)
+		textArea.scrollRectToVisible(rect)
 	}
 	
 	def cls()

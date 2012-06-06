@@ -16,11 +16,11 @@ class BinsicWindow {
 		controlObject = controller
 		swinger = new SwingBuilder()
 		mainFrame = swinger.frame(
-			title: "BINSIC is not Sinclair Instruction Code",
+			title: "Binsic is not Sinclair Instruction Code",
 			size:[640, 480],
 			show:true,
-			defaultCloseOperation: JFrame.DISPOSE_ON_CLOSE){
-			scrollPane() {
+			defaultCloseOperation: WindowConstants.DISPOSE_ON_CLOSE){
+			scrollPane(autoscrolls:true) {
 				screenZX = textArea(rows:24, columns:32) {visble:true}
 			}
 			screenZX.setFont(new Font("Monospaced", Font.PLAIN, 18))

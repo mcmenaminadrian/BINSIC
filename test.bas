@@ -1,12 +1,13 @@
-10 REM Simple BASIC code
+10 REM Fibonacci sequence
+20 LET x = 0
+30 LET y = 1
+40 LET i = 0
+50 PRINT "Iteration ", i, " value is ", x
+60 LET temp = x
+70 LET x = y
+80 LET y = y + temp
+90 LET i = i + 1
+100 if (i < 40)
+110 GOTO 50
 
-20 LET x = 5
-30 PRINT "Hello Binsic World: x is ", x
-40 LET x = x + 10
-50 PRINT "x is now ", x
-60 GOTO 120
-70 PRINT "Oh!"
-80 x = 5
-120 x = x + 90
-125 PRINT "here now"
-130 PRINT "And finally...",x
+
