@@ -17,10 +17,16 @@ class BinsicPreprocessor {
 	def lineMap =[:]
 	def lineNo = 0
 	
-	def commands = ["PRINT", "REM", "LET", "FAST", "SLOW",
-		"POKE", "PEEK", "USR", "CLS", "GOTO"]
+	def commands = ["^PRINT", "^REM", "^LET", "^FAST", "^SLOW",
+		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
 		"//POKE", "//PEEK", "//USR", "cls()", "getTo" ]
+	def complexCommands = ["^IF((\\s)+(.)+(\\s)+)+THEN"]
+	def complexCommandClosures = [matchedIf]
+	
+	def matchedIf = {
+		println "WhooHoo"
+	}
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
@@ -30,14 +36,20 @@ class BinsicPreprocessor {
 			lineMap << ["${progLine[0]}":"$lineNo"]
 		}
 		lineNo++
-		binsicMid.append lineOut
+		binsicMid.append lineOut.trim()
 		binsicMid.append "\n"
 	}
 	
 	def processCaps = {lineIn ->
 		def lineOut = new String(lineIn)
 		commands.eachWithIndex { com, index ->
-			lineOut = lineOut.replace(com, processedCommands[index])
+			lineOut = lineOut.replaceAll(com, processedCommands[index])
+		}
+		complexCommands.eachWithIndex { complexCom, index ->
+			if (lineIn =~ complexCom) {
+				println "Index is $index, line in is ${lineIn}"
+				println "${complexCommandClosures[index]}"
+				(complexCommandClosures[index]).call() }
 		}
 		binsicOut.append lineOut
 		binsicOut.append "\n"
