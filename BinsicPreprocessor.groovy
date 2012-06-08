@@ -19,22 +19,33 @@ class BinsicPreprocessor {
 	def lineMap =[:]
 	def lineNo = 0
 	
-	def commands = ["^PRINT", "^REM", "^LET", "^FAST", "^SLOW",
+	def commands = ["^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
 		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
 		"//POKE", "//PEEK", "//USR", "cls()", "getTo" ]
-	def complexCommands = ["^IF\\s((.(?!THEN))+)\\sTHEN\\s(.+)"]
+	def complexCommands = 
+		["^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)",
+		"^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)\\sELSE(.+)"]
 
-	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
-		def mainClause = matcher[0][1]
+		def mainClause = (matcher[0][1]).trim()
 		def actionClause = matcher[0][3]
 		actionClause = processCaps(actionClause.trim())
-		return "if (${mainClause.trim()}) ${actionClause}"
+		return "if (${mainClause}) ${actionClause}"
 	}
 	
-	def complexCommandClosures = [matchedIf]
+	def matchedElse = {statementMatch, line ->
+		def matcher = (line =~ statementMatch)
+		def mainClause = (matcher[0][1]).trim()
+		def actionClause = matcher[0][3]
+		def elseClause = matcher[0][5]
+		actionClause = processCaps(actionClause.trim())
+		elseClause = processCaps(elseClause.trim())
+		return "if (${mainClause}) ${actionClause} else { ${elseClause} }"
+	}
+		
+	def complexCommandClosures = [matchedIf, matchedElse]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
@@ -47,26 +58,23 @@ class BinsicPreprocessor {
 		binsicMid.append lineOut.trim()
 		binsicMid.append "\n"
 	}
-	
-	
+		
 	def processCaps = {lineIn ->
-		def retLine
 		def lineOut = new String(lineIn)
 		commands.eachWithIndex { com, index ->
 			lineOut = lineOut.replaceAll(com, processedCommands[index])
 		}
-		
 		complexCommands.eachWithIndex { complexCom, index ->
-			retLine = new String(lineOut)
 			if (lineOut =~ complexCom)
-				retLine = (complexCommandClosures[index]).call(complexCom, lineOut)
+				lineOut = (complexCommandClosures[index]).call(
+					complexCom, lineOut)
 		}
-		return retLine
+		return lineOut
 	}
 	
 	def processLines = { line->
-		line = processCaps(line)
-		binsicOut.append line
+		def outLine = processCaps(line)
+		binsicOut.append outLine
 		binsicOut.append "\n"
 	}
 	
