@@ -19,7 +19,7 @@ class BinsicWindow {
 			title: "Binsic is not Sinclair Instruction Code",
 			size:[640, 480],
 			show:true,
-			defaultCloseOperation: WindowConstants.DISPOSE_ON_CLOSE){
+			defaultCloseOperation: WindowConstants.EXIT_ON_CLOSE){
 			scrollPane(autoscrolls:true) {
 				screenZX = textArea(rows:24, columns:32) {visble:true}
 			}

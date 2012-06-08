@@ -23,13 +23,13 @@ class BinsicPreprocessor {
 		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
 		"//POKE", "//PEEK", "//USR", "cls()", "getTo" ]
-	def complexCommands = ["^(IF){1}((\\s)(.+)(\\s+)){1}(THEN){1}(.+)"]
+	def complexCommands = ["^IF\\s((.(?!THEN))+)\\sTHEN\\s(.+)"]
 
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
-		def mainClause = matcher[0][2]
-		def actionClause = matcher[0][7]
+		def mainClause = matcher[0][1]
+		def actionClause = matcher[0][3]
 		actionClause = processCaps(actionClause.trim())
 		return "if (${mainClause.trim()}) ${actionClause}"
 	}

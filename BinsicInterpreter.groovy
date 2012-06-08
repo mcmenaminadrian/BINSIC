@@ -32,6 +32,7 @@ abstract class BinsicInterpreter extends Script {
 	def getTo(def lineNo)
 	{
 		binsicEngine.getTo(lineNo)
+		new BinsicDialog()
 		System.in.withReader { println (it.readLine()) }
 	}
 	
