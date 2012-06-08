@@ -1,5 +1,7 @@
 package binsic
 
+import java.util.regex.Matcher
+
 /*
  * Preprocess BASIC script into something
  * Groovy will handle (eg deal with capitalisation etc)
@@ -21,12 +23,18 @@ class BinsicPreprocessor {
 		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
 		"//POKE", "//PEEK", "//USR", "cls()", "getTo" ]
-	def complexCommands = ["^IF((\\s)+(.)+(\\s)+)+THEN"]
-	def complexCommandClosures = [matchedIf]
+	def complexCommands = ["^(IF){1}((\\s)(.+)(\\s+)){1}(THEN){1}(.+)"]
+
 	
-	def matchedIf = {
-		println "WhooHoo"
+	def matchedIf = {statementMatch, line ->
+		def matcher = (line =~ statementMatch)
+		def mainClause = matcher[0][2]
+		def actionClause = matcher[0][7]
+		actionClause = processCaps(actionClause.trim())
+		return "if (${mainClause.trim()}) ${actionClause}"
 	}
+	
+	def complexCommandClosures = [matchedIf]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
@@ -40,18 +48,25 @@ class BinsicPreprocessor {
 		binsicMid.append "\n"
 	}
 	
+	
 	def processCaps = {lineIn ->
+		def retLine
 		def lineOut = new String(lineIn)
 		commands.eachWithIndex { com, index ->
 			lineOut = lineOut.replaceAll(com, processedCommands[index])
 		}
+		
 		complexCommands.eachWithIndex { complexCom, index ->
-			if (lineIn =~ complexCom) {
-				println "Index is $index, line in is ${lineIn}"
-				println "${complexCommandClosures[index]}"
-				(complexCommandClosures[index]).call() }
+			retLine = new String(lineOut)
+			if (lineOut =~ complexCom)
+				retLine = (complexCommandClosures[index]).call(complexCom, lineOut)
 		}
-		binsicOut.append lineOut
+		return retLine
+	}
+	
+	def processLines = { line->
+		line = processCaps(line)
+		binsicOut.append line
 		binsicOut.append "\n"
 	}
 	
@@ -62,8 +77,7 @@ class BinsicPreprocessor {
 		basicIn = new File(name)
 	
 		basicIn.eachLine(stripLines)
-		binsicMid.eachLine(processCaps)
-		
+		binsicMid.eachLine(processLines)
 	}
 	
 	def reStart(def name, def line)
@@ -72,7 +86,7 @@ class BinsicPreprocessor {
 		def count = 0
 		binsicMid.eachLine(){
 			if (count++ >= line)
-				processCaps(it)
+				processLines(it)
 		}
 	}
 	

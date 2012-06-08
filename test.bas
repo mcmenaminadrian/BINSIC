@@ -7,8 +7,7 @@
 70 LET x = y
 80 LET y = y + temp
 90 LET i = i + 1
-95 IF x THEN woop
-100 if (i < 40)
-110 GOTO 50
+95 IF x < 10000 THEN GOTO 50
+
 
 
