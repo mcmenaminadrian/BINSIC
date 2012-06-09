@@ -20,17 +20,15 @@ class BinsicPreprocessor {
 	def lineNo = 0
 	
 	def commands = ["^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
-		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO"]
+		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO", "^NEXT(\\s)+[A-Z]"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
-		"//POKE", "//PEEK", "//USR", "cls()", "getTo" ]
+		"//POKE", "//PEEK", "//USR", "cls()", "getTo", "}" ]
 
-	def numExp = "[0-9|A-Z| |(NOT)|(AND)|(OR)|\\[|\\]|" + 
-	"(\\*\\*)|-|\\*|/|\\+|=|>|<]"
 	
-	def partIf = "^IF\\s((${numExp}(?!THEN))+)\\sTHEN\\s((${numExp}(?!ELSE))+)"
+	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
 	def complexCommands = ["${partIf}?!(\\sELSE(.+))", "${partIf}\\sELSE(.+)",
-		"FOR(\\s)+([A-Z]){1}(\\s)*="]
+		"FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*"]
 
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -51,9 +49,22 @@ class BinsicPreprocessor {
 	}
 	
 	def matchedFor = {statementMatch, line ->
+		def matcher = (line =~statementMatch)
+		def varCount = matcher[0][2]
+		def startCount = matcher[0][4]
+		def endCount = matcher[0][6]
+		def lineBack = "for ($varCount in ($startCount..$endCount)"
+		if (matcher[0][11]) 
+			lineBack += ".step(${matcher[0][11].trim()})"
+		lineBack += ") {"
+		return lineBack
+	}
+	
+	def dummyMatch = { statementMatch, line->
+		println "DUMMY"
 	}
 		
-	def complexCommandClosures = [matchedIf, matchedElse, matchedFor]
+	def complexCommandClosures = [matchedIf, matchedElse, matchedFor, dummyMatch]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
