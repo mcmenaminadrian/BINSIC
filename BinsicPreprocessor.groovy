@@ -28,7 +28,8 @@ class BinsicPreprocessor {
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
 	def complexCommands = ["${partIf}?!(\\sELSE(.+))", "${partIf}\\sELSE(.+)",
-		"FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*"]
+		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
+		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)"]
 
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -49,7 +50,7 @@ class BinsicPreprocessor {
 	}
 	
 	def matchedFor = {statementMatch, line ->
-		def matcher = (line =~statementMatch)
+		def matcher = (line =~ statementMatch)
 		def varCount = matcher[0][2]
 		def startCount = matcher[0][4]
 		def endCount = matcher[0][6]
@@ -60,11 +61,25 @@ class BinsicPreprocessor {
 		return lineBack
 	}
 	
+	def dimMatch = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		matcher.each {println "Match is>>$it<<"}
+		def varName = (matcher[0][1]).getAt(0)
+		if ((matcher[0][1]).size() > 1)
+			varName += "String"
+		def i = 2
+		def addDimensions = "new Object"
+		if (matcher[0][i])
+			addDimensions += "[${matcher[0][i]}]"
+		return "$varName = $addDimensions"
+	}
+
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
 	}
 		
-	def complexCommandClosures = [matchedIf, matchedElse, matchedFor, dummyMatch]
+	def complexCommandClosures = [matchedIf, matchedElse, matchedFor,
+		dimMatch, dummyMatch]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)

@@ -1,4 +1,7 @@
-10 REM Fibonacci sequence
+10 REM Fibonacci Series
+15 DIM B(5)
+16 LET B[0] = 190
+17 PRINT "B[0] is ", B[0]
 20 LET X = 0
 30 LET Y = 1
 40 LET I = 0
@@ -15,3 +18,4 @@
 100 PRINT "Sequence generation finished."
 110 NEXT K
 120 NEXT J
+130 DIM A(90)
