@@ -23,9 +23,14 @@ class BinsicPreprocessor {
 		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
 		"//POKE", "//PEEK", "//USR", "cls()", "getTo" ]
-	def complexCommands = 
-		["^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)",
-		"^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)\\sELSE(.+)"]
+
+	def numExp = "[0-9|A-Z| |(NOT)|(AND)|(OR)|\\[|\\]|" + 
+	"(\\*\\*)|-|\\*|/|\\+|=|>|<]"
+	
+	def partIf = "^IF\\s((${numExp}(?!THEN))+)\\sTHEN\\s((${numExp}(?!ELSE))+)"
+	
+	def complexCommands = ["${partIf}?!(\\sELSE(.+))", "${partIf}\\sELSE(.+)",
+		"FOR(\\s)+([A-Z]){1}(\\s)*="]
 
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -44,8 +49,11 @@ class BinsicPreprocessor {
 		elseClause = processCaps(elseClause.trim())
 		return "if (${mainClause}) ${actionClause} else { ${elseClause} }"
 	}
+	
+	def matchedFor = {statementMatch, line ->
+	}
 		
-	def complexCommandClosures = [matchedIf, matchedElse]
+	def complexCommandClosures = [matchedIf, matchedElse, matchedFor]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
