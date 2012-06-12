@@ -1,21 +1,12 @@
 10 REM Fibonacci Series
-15 DIM B(5)
-16 LET B[0] = 190
-17 PRINT "B[0] is ", B[0]
-20 LET X = 0
-30 LET Y = 1
-40 LET I = 0
-50 PRINT "Iteration ", I, " value is ", X
-60 LET TEMP = X
-70 LET X = Y
-80 LET Y = Y + TEMP
-90 LET I = I + 1
-95 IF X < 10000000 THEN GOTO 50 ELSE PRINT "All over now"
-96 FOR J = I + 1000 TO I * 4 STEP I - 34 
-97 PRINT "J is ", J
-98 FOR K = 1 TO 3
-99 PRINT "K is", K
-100 PRINT "Sequence generation finished."
-110 NEXT K
-120 NEXT J
-130 DIM A(90)
+20 DIM X(10, 10)
+30 LET S = 0
+40 LET T = 1
+50 FOR I = 0 TO 9
+60 LET X(0, I) = S + T
+80 LET S = T
+90 LET T = X(0, I)
+100 NEXT I
+110 FOR J = 0 TO 9
+120 PRINT "Fibonnaci series element ", J, " is ", X(0, J)
+130 NEXT J
