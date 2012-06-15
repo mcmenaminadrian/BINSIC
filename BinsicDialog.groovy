@@ -18,5 +18,4 @@ class BinsicDialog {
 	{
 		System.exit(1)
 	}
-	
 }

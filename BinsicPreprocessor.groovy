@@ -76,6 +76,9 @@ class BinsicPreprocessor {
 		}
 		def dimLine = "$varName = new Object"
 		dimLine += getDimensions(matcher[0][2], "")
+		BinsicInterpreter.metaClass."$varName" = {arg ->
+			return delegate."$varName".getAt(arg)
+		}
 		return dimLine
 	}
 	
@@ -86,7 +89,6 @@ class BinsicPreprocessor {
 	
 	def matchedArray = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		matcher.each{println "Array match was $it"}
 		return "${matcher[0][1]}[${matcher[0][2]}]${matcher[0][3]}"
 	}
 
@@ -153,6 +155,5 @@ class BinsicPreprocessor {
 	{
 		binsicOut = File.createTempFile("${System.nanoTime()}", null)
 		binsicOut.write "package binsic\n"
-		binsicOut.write "import java.lang.Math.*\n"
 	}
 }

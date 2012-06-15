@@ -1,5 +1,7 @@
 package binsic
 
+import java.lang.Math
+
 abstract class BinsicInterpreter extends Script {
 	
 	static def textArea
