@@ -63,20 +63,22 @@ class BinsicPreprocessor {
 		lineBack += ") {"
 		return lineBack
 	}
-	
+
+	def getDimensions = {dimString, outString->
+		def dimPattern = Pattern.compile("[^, ]+")
+		def dimMatch = dimPattern.matcher(dimString)
+		dimMatch.each{outString += "[$it]"}
+		return outString
+	}
+		
 	def matchedDim = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
 		def varName = (matcher[0][1]).getAt(0)
 		if (matcher[0][1].size() > 1)
 			varName += "_"
-		def getDimensions = {dimString, outString->
-			def dimPattern = Pattern.compile("[^, ]+")
-			def dimMatch = dimPattern.matcher(dimString)
-			dimMatch.each{outString += "[$it]"}
-			return outString
-		}
 		def dimLine = "$varName = new Object"
 		dimLine += getDimensions(matcher[0][2], "")
+		/* array references look like functions to Groovy so trap them */
 		BinsicInterpreter.metaClass."$varName" = {Object[] arg ->
 			def answer = "package binsic; $varName"
 			arg.each { 
@@ -95,7 +97,10 @@ class BinsicPreprocessor {
 	
 	def matchedArray = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		return "${matcher[0][1]}[${matcher[0][2]}]${matcher[0][3]}"
+		def arrayRef ="${matcher[0][1]}"
+		arrayRef += getDimensions(matcher[0][2], "")
+		arrayRef += "${matcher[0][3]}"
+		return arrayRef
 	}
 
 	def dummyMatch = { statementMatch, line->
