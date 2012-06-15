@@ -30,10 +30,8 @@ class BinsicPreprocessor {
 	
 	def complexCommands = ["${partIf}?!(\\sELSE(.+))", "${partIf}\\sELSE(.+)",
 		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
-		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)",
-		"^([A-Z])\\\$(.+)", "^[A-Z](\\(.+\\))", "^[A-Z]_dollar(\\(.+\\))"]
-
-
+		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)", "(.*)([A-Z])\\\$(.*)",
+		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)"]
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -69,7 +67,7 @@ class BinsicPreprocessor {
 		def matcher = (line =~ statementMatch)
 		def varName = (matcher[0][1]).getAt(0)
 		if (matcher[0][1].size() > 1)
-			varName += "_dollar"
+			varName += "_"
 		def getDimensions = {dimString, outString->
 			def dimPattern = Pattern.compile("[^, ]+")
 			def dimMatch = dimPattern.matcher(dimString)
@@ -83,12 +81,13 @@ class BinsicPreprocessor {
 	
 	def matchedDollar = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		return "${matcher[0][1]}_dollar${matcher[0][2]}"
+		return "${matcher[0][1]}${matcher[0][2]}_${matcher[0][3]}"
 	}
 	
 	def matchedArray = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
 		matcher.each{println "Array match was $it"}
+		return "${matcher[0][1]}[${matcher[0][2]}]${matcher[0][3]}"
 	}
 
 	def dummyMatch = { statementMatch, line->
@@ -154,5 +153,6 @@ class BinsicPreprocessor {
 	{
 		binsicOut = File.createTempFile("${System.nanoTime()}", null)
 		binsicOut.write "package binsic\n"
+		binsicOut.write "import java.lang.Math.*\n"
 	}
 }
