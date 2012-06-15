@@ -39,6 +39,7 @@ class BinsicEngine{
 		conf.setScriptBaseClass("BinsicInterpreter")
 		shell = new GroovyShell(conf)
 		preProc = BinsicPreprocessor.getCurrentPreproc()
+		preProc.setShell(shell)
 		preProc.startUp(basic)
 		shell.evaluate(preProc.binsicOut)
 	}

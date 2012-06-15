@@ -19,6 +19,7 @@ class BinsicPreprocessor {
 	def binsicOut
 	def lineMap =[:]
 	def lineNo = 0
+	def shell
 	
 	def commands = ["^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
 		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO", "^NEXT(\\s)+[A-Z]"]
@@ -76,8 +77,13 @@ class BinsicPreprocessor {
 		}
 		def dimLine = "$varName = new Object"
 		dimLine += getDimensions(matcher[0][2], "")
-		BinsicInterpreter.metaClass."$varName" = {arg ->
-			return delegate."$varName".getAt(arg)
+		BinsicInterpreter.metaClass."$varName" = {Object[] arg ->
+			def answer = "package binsic; $varName"
+			arg.each { 
+				answer = answer + "[$it]"
+			}
+			def something = shell.evaluate(answer)
+			return something
 		}
 		return dimLine
 	}
@@ -129,6 +135,11 @@ class BinsicPreprocessor {
 		println outLine
 		binsicOut.append outLine
 		binsicOut.append "\n"
+	}
+	
+	def setShell(def sh)
+	{
+		shell = sh
 	}
 	
 	def startUp(def name)
