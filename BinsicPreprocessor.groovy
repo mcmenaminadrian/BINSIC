@@ -65,7 +65,7 @@ class BinsicPreprocessor {
 	}
 
 	def getDimensions = {dimString, outString->
-		def dimPattern = Pattern.compile("[^, ]+")
+		def dimPattern = Pattern.compile("[^,]+")
 		def dimMatch = dimPattern.matcher(dimString)
 		dimMatch.each{outString += "[$it]"}
 		return outString
