@@ -21,22 +21,22 @@ class BinsicPreprocessor {
 	def lineNo = 0
 	def shell
 	def aClosure
+	def inClosure = false
 	
 	def commands = ["^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
-		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO", "^NEXT(\\s)+[A-Z]",
+		"^POKE", "^PEEK", "^USR", "^CLS", "^NEXT(\\s)+[A-Z]",
 		"^RETURN", "END"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
-		"//POKE", "//PEEK", "//USR", "cls()", "getTo", "}", "return",
+		"//POKE", "//PEEK", "//USR", "cls()", "}", "return",
 		"new BinsicDialog(); System.in.withReader {println (it.readLine())}"]
 
-	
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
 	def complexCommands = ["${partIf}(?!(.*ELSE.*))", "${partIf}\\sELSE(.+)",
 		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
 		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)", "(.*)([A-Z])\\\$(.*)",
 		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)",
-		"(.*)GOSUB\\s+(.*)"]
+		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)"]
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -111,6 +111,13 @@ class BinsicPreprocessor {
 		def matcher = (line =~ statementMatch)
 		return "${matcher[0][1]} buildClosure(${matcher[0][2]})"
 	}
+	
+	def matchedGoto = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		if (inClosure)
+			return "runTo ${matcher[0][1]}"
+		else return "getTo ${matcher[0][1]}"
+	}
 
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
@@ -118,7 +125,7 @@ class BinsicPreprocessor {
 		
 	def complexCommandClosures = [matchedIf, matchedElse, matchedFor,
 		matchedDim, matchedDollar, matchedArray, matchedArray,
-		matchedGosub, dummyMatch]
+		matchedGosub, matchedGoto, dummyMatch]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
@@ -155,7 +162,7 @@ class BinsicPreprocessor {
 	def buildClosure(line) 
 	{
 		def outLine = processCaps(line)
-		//println "Closure line: $outLine"
+		println "Closure line: $outLine"
 		aClosure += "$outLine\n"
 		if (outLine =~ "^return"){
 			aClosure += "}\n"
@@ -192,12 +199,14 @@ class BinsicPreprocessor {
 	def hackClosure(def line)
 	{
 		def count = 0
+		inClosure = true
 		aClosure = "package binsic\n{->\n"
 		def good = true
 		binsicMid.eachLine() {
 			if (count++ >= line && good)
 				good = buildClosure(it)
 		}
+		inClosure = false
 		return aClosure
 	}
 	

@@ -38,6 +38,11 @@ abstract class BinsicInterpreter extends Script {
 		System.in.withReader { println (it.readLine()) }
 	}
 	
+	def runTo(def lineNo)
+	{
+		binsicEngine.getTo(lineNo)
+	}
+	
 	def buildClosure(def lineNo)
 	{
 		def subString= binsicEngine.buildClosure(lineNo)
