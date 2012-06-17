@@ -206,6 +206,8 @@ class BinsicPreprocessor {
 			if (count++ >= line && good)
 				good = buildClosure(it)
 		}
+		if (good)
+			aClosure += "}\n"
 		inClosure = false
 		return aClosure
 	}
