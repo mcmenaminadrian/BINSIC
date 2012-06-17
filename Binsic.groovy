@@ -30,6 +30,12 @@ class BinsicEngine{
 		shell.evaluate(preProc.binsicOut)
 	}
 	
+	def buildClosure(def lineNo)
+	{
+		def fileLine = preProc.lineMap.get("$lineNo")
+		return preProc.hackClosure(fileLine as Integer)
+	}
+	
 	def process(def name)
 	{
 		basic = name
@@ -42,6 +48,8 @@ class BinsicEngine{
 		preProc.setShell(shell)
 		preProc.startUp(basic)
 		shell.evaluate(preProc.binsicOut)
+		new BinsicDialog()
+		System.in.withReader { println (it.readLine()) }
 	}
 }
 

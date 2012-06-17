@@ -38,5 +38,10 @@ abstract class BinsicInterpreter extends Script {
 		System.in.withReader { println (it.readLine()) }
 	}
 	
-
+	def buildClosure(def lineNo)
+	{
+		def subString= binsicEngine.buildClosure(lineNo)
+		def subroutine = binsicEngine.shell.evaluate("$subString")
+		subroutine()
+	}
 }

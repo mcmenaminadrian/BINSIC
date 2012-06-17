@@ -20,19 +20,23 @@ class BinsicPreprocessor {
 	def lineMap =[:]
 	def lineNo = 0
 	def shell
+	def aClosure
 	
 	def commands = ["^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
-		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO", "^NEXT(\\s)+[A-Z]"]
+		"^POKE", "^PEEK", "^USR", "^CLS", "^GOTO", "^NEXT(\\s)+[A-Z]",
+		"^RETURN", "END"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
-		"//POKE", "//PEEK", "//USR", "cls()", "getTo", "}"]
+		"//POKE", "//PEEK", "//USR", "cls()", "getTo", "}", "return",
+		"new BinsicDialog(); System.in.withReader {println (it.readLine())}"]
 
 	
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
-	def complexCommands = ["${partIf}?!(\\sELSE(.+))", "${partIf}\\sELSE(.+)",
+	def complexCommands = ["${partIf}(?!(.*ELSE.*))", "${partIf}\\sELSE(.+)",
 		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
 		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)", "(.*)([A-Z])\\\$(.*)",
-		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)"]
+		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)",
+		"(.*)GOSUB\\s+(.*)"]
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -67,7 +71,7 @@ class BinsicPreprocessor {
 	def getDimensions = {dimString, outString->
 		def dimPattern = Pattern.compile("[^,]+")
 		def dimMatch = dimPattern.matcher(dimString)
-		dimMatch.each{outString += "[$it]"}
+		dimMatch.each{outString += "[${it.trim()}]"}
 		return outString
 	}
 		
@@ -102,13 +106,19 @@ class BinsicPreprocessor {
 		arrayRef += "${matcher[0][3]}"
 		return arrayRef
 	}
+	
+	def matchedGosub = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		return "${matcher[0][1]} buildClosure(${matcher[0][2]})"
+	}
 
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
 	}
 		
 	def complexCommandClosures = [matchedIf, matchedElse, matchedFor,
-		matchedDim, matchedDollar, matchedArray, matchedArray, dummyMatch]
+		matchedDim, matchedDollar, matchedArray, matchedArray,
+		matchedGosub, dummyMatch]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
@@ -142,6 +152,18 @@ class BinsicPreprocessor {
 		binsicOut.append "\n"
 	}
 	
+	def buildClosure(line) 
+	{
+		def outLine = processCaps(line)
+		//println "Closure line: $outLine"
+		aClosure += "$outLine\n"
+		if (outLine =~ "^return"){
+			aClosure += "}\n"
+			return false
+		} else
+			return true
+	}
+	
 	def setShell(def sh)
 	{
 		shell = sh
@@ -165,6 +187,18 @@ class BinsicPreprocessor {
 			if (count++ >= line)
 				processLines(it)
 		}
+	}
+	
+	def hackClosure(def line)
+	{
+		def count = 0
+		aClosure = "package binsic\n{->\n"
+		def good = true
+		binsicMid.eachLine() {
+			if (count++ >= line && good)
+				good = buildClosure(it)
+		}
+		return aClosure
 	}
 	
 	def setupTempFile(def name)
