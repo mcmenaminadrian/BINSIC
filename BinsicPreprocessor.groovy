@@ -35,8 +35,10 @@ class BinsicPreprocessor {
 	def complexCommands = ["${partIf}(?!(.*ELSE.*))", "${partIf}\\sELSE(.+)",
 		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
 		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)", "(.*)([A-Z])\\\$(.*)",
+		/* After here all $ have become _ */
 		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)",
-		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)"]
+		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)\$",
+		"^INPUT\\s([A-Z0-9]+_)"]
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -118,6 +120,22 @@ class BinsicPreprocessor {
 			return "runTo ${matcher[0][1]}"
 		else return "getTo ${matcher[0][1]}"
 	}
+	
+	def matchedInputNum = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		matcher.each {println "Num Input match is $it"}
+		def retString = "${matcher[0][1]} ="
+		retString += "(new BufferedReader(new InputStreamReader(System.in)))."
+		retString += "readLine()"
+	}
+	
+	def matchedInputStr = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		matcher.each {println "Str Input match is $it"}
+		def retString = "String ${matcher[0][1]} ="
+		retString += "new Scanner(System.in).nextLine()\n"
+		return retString
+	}
 
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
@@ -125,7 +143,8 @@ class BinsicPreprocessor {
 		
 	def complexCommandClosures = [matchedIf, matchedElse, matchedFor,
 		matchedDim, matchedDollar, matchedArray, matchedArray,
-		matchedGosub, matchedGoto, dummyMatch]
+		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
+		dummyMatch]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
