@@ -1,8 +1,9 @@
 10 REM Fibonacci Series
 20 LET X = 0
 30 LET Y = 1
-32 REM INPUT COBBLERS99
-33 PRINT "Input a string, please."
+31 PRINT "Enter a number"
+32 INPUT COBBLERS99
+33 REM PRINT "Input a string, please."
 34 REM INPUT ZING$
 35 PRINT "Thanks"
 40 LET COUNT = 0

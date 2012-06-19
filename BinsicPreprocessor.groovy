@@ -126,7 +126,7 @@ class BinsicPreprocessor {
 		def matcher = (line =~ statementMatch)
 		matcher.each {println "Num Input match is $it"}
 		def retString = "scan = new Scanner(System.in);"
-		retString + "${matcher[0][1]} ="
+		retString += "${matcher[0][1]} ="
 		retString += "scan.nextLine()\n"
 		return retString
 	}
