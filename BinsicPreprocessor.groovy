@@ -43,6 +43,7 @@ class BinsicPreprocessor {
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
 		def mainClause = (matcher[0][1]).trim()
+		mainClause = mainClause.replaceAll(" = ", " == ")
 		def actionClause = matcher[0][3]
 		actionClause = processCaps(actionClause.trim())
 		return "if (${mainClause}) ${actionClause}"
@@ -124,15 +125,16 @@ class BinsicPreprocessor {
 	def matchedInputNum = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
 		matcher.each {println "Num Input match is $it"}
-		def retString = "${matcher[0][1]} ="
-		retString += "(new BufferedReader(new InputStreamReader(System.in)))."
-		retString += "readLine()"
+		def retString = "scan = new Scanner(System.in);"
+		retString + "${matcher[0][1]} ="
+		retString += "scan.nextLine()\n"
+		return retString
 	}
 	
 	def matchedInputStr = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
 		matcher.each {println "Str Input match is $it"}
-		def retString = "String ${matcher[0][1]} ="
+		def retString = "println 'str';String ${matcher[0][1]} ="
 		retString += "new Scanner(System.in).nextLine()\n"
 		return retString
 	}
