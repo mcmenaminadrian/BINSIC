@@ -20,7 +20,7 @@ abstract class BinsicInterpreter extends Script {
 		binsicEngine = engine
 	}
 	
-	def printIt()
+	def scroll()
 	{
 		textArea.append("\n")
 	}

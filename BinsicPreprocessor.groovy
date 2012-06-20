@@ -31,7 +31,7 @@ class BinsicPreprocessor {
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
 		"//POKE", "//PEEK", "//USR", "cls()", "}", "return", "END",
 		"new BinsicDialog(); System.in.withReader {println (it.readLine())}",
-		"printIt()"]
+		"scroll()"]
 
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
@@ -161,6 +161,13 @@ class BinsicPreprocessor {
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
 		matchedPause, matchedRand, dummyMatch]
 	
+	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
+		"LN", "PI", "SIN", "SQR", "TAN"]
+	def mathReplace = ["abs", "acos", "asin", "atan", "cos", "exp",
+		"log", "PI", "sin", "sqrt", "tan"]
+	
+	def partMathOne = "(([^\"]|(\"[^\"]*\"))+)"
+	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
 		def progLine = (lineOut =~/^[0-9]+/)
@@ -182,6 +189,14 @@ class BinsicPreprocessor {
 			if (lineOut =~ complexCom)
 				lineOut = (complexCommandClosures[index]).call(
 					complexCom, lineOut)
+		}
+		mathBuilder.eachWithIndex {mathsElement, index ->
+			def mathsCommand = "${partMathOne}(${mathsElement})(.*)"
+			if (lineOut =~ mathsCommand) {
+				def matcher = (lineOut =~ mathsCommand)
+				lineOut =
+				"${matcher[0][1]}Math.${mathReplace[index]}${matcher[0][5]}"
+			}
 		}
 		return lineOut
 	}
