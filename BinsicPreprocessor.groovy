@@ -40,7 +40,7 @@ class BinsicPreprocessor {
 		/* After here all $ have become _ */
 		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)",
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)\$",
-		"^INPUT\\s([A-Z0-9]+_)", "^PAUSE\\s(.+)"]
+		"^INPUT\\s([A-Z0-9]+_)", "^PAUSE\\s(.+)", "^RAND(.*)"]
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -126,13 +126,13 @@ class BinsicPreprocessor {
 	
 	def matchedInputNum = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		def retString = "${matcher[0][1]} = waitOnInput()\n"
+		def retString = "${matcher[0][1]} = waitOnInput()"
 		return retString
 	}
 	
 	def matchedInputStr = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		def retString = "${matcher[0][1]} = waitOnInputString()\n"
+		def retString = "${matcher[0][1]} = waitOnInputString()"
 		return retString
 	}
 	
@@ -142,6 +142,14 @@ class BinsicPreprocessor {
 		delay = matcher[0][1] as Integer
 		return "pause($delay)"
 	}
+	
+	def matchedRand = { statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		def seed = -1
+		if (matcher[0][1])
+			seed = matcher[0][1] as Integer
+		return "randomize($seed)"
+	}
 
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
@@ -150,7 +158,7 @@ class BinsicPreprocessor {
 	def complexCommandClosures = [matchedIf, matchedElse, matchedFor,
 		matchedDim, matchedDollar, matchedArray, matchedArray,
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
-		matchedPause, dummyMatch]
+		matchedPause, matchedRand, dummyMatch]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)

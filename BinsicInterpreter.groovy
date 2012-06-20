@@ -8,6 +8,7 @@ abstract class BinsicInterpreter extends Script {
 	
 	static def textArea
 	static def binsicEngine
+	def randomNumberGenerator
 	
 	static def setTextArea(def window)
 	{
@@ -96,5 +97,13 @@ abstract class BinsicInterpreter extends Script {
 		} else {
 			Thread.sleep(interval * 20)
 		}
+	}
+	
+	def randomize(def seed)
+	{
+		if (seed < 0)
+			randomNumberGenerator = new Random();
+		else
+			randomNumberGenerator = new Random(seed)
 	}
 }
