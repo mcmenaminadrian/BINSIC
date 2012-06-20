@@ -9,6 +9,7 @@
 50 DIM Z(FIBMAX)
 60 GOSUB 110
 62 FOR I = 1 TO FIBMAX
+63 SCROLL
 64 PRINT "Fibonacci number ", I, " is ", Z(I - 1)
 66 NEXT I
 70 END

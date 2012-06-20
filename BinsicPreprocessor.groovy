@@ -27,10 +27,11 @@ class BinsicPreprocessor {
 	
 	def commands = ["^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
 		"^POKE", "^PEEK", "^USR", "^CLS", "^NEXT(\\s)+[A-Z]",
-		"^RETURN", "END"]
+		"^RETURN", "^STOP", "^END", "^SCROLL"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
-		"//POKE", "//PEEK", "//USR", "cls()", "}", "return",
-		"new BinsicDialog(); System.in.withReader {println (it.readLine())}"]
+		"//POKE", "//PEEK", "//USR", "cls()", "}", "return", "END",
+		"new BinsicDialog(); System.in.withReader {println (it.readLine())}",
+		"printIt()"]
 
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	

@@ -20,6 +20,11 @@ abstract class BinsicInterpreter extends Script {
 		binsicEngine = engine
 	}
 	
+	def printIt()
+	{
+		textArea.append("\n")
+	}
+	
 	def printIt(Object [] param) {
 		param.each {
 			textArea.append "$it"
