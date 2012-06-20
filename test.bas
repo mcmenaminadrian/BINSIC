@@ -1,6 +1,9 @@
 10 REM Fibonacci Series
 20 LET X = 0.0
-30 LET Y = 1.0
+25 LET Y = 1.0
+26 PRINT "HERE"
+27 PAUSE 100
+28 PRINT "we go"
 31 PRINT "How many numbers in series?"
 32 INPUT FIBMAX
 35 PRINT "Thanks"

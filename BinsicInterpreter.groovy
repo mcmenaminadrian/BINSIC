@@ -86,7 +86,15 @@ abstract class BinsicInterpreter extends Script {
 		textIn.getActionMap().put(BinsicConstants.INPUTSTRING,
 			inputStringAction)
 		countDown.await()
-		return inputStringAction.result
-		
+		return inputStringAction.result	
+	}
+	
+	def pause(def interval)
+	{
+		if (interval > 32767){
+			return waitOnInput()
+		} else {
+			Thread.sleep(interval * 20)
+		}
 	}
 }

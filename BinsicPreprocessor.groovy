@@ -40,7 +40,7 @@ class BinsicPreprocessor {
 		/* After here all $ have become _ */
 		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)",
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)\$",
-		"^INPUT\\s([A-Z0-9]+_)"]
+		"^INPUT\\s([A-Z0-9]+_)", "^PAUSE\\s(.+)"]
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -135,6 +135,13 @@ class BinsicPreprocessor {
 		def retString = "${matcher[0][1]} = waitOnInputString()\n"
 		return retString
 	}
+	
+	def matchedPause = { statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		def delay
+		delay = matcher[0][1] as Integer
+		return "pause($delay)"
+	}
 
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
@@ -143,7 +150,7 @@ class BinsicPreprocessor {
 	def complexCommandClosures = [matchedIf, matchedElse, matchedFor,
 		matchedDim, matchedDollar, matchedArray, matchedArray,
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
-		dummyMatch]
+		matchedPause, dummyMatch]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
