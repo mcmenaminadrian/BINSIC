@@ -14,7 +14,7 @@
 64 PRINT "Fibonacci number ", I, " in series called ", A$," is ", Z(I - 1)
 66 NEXT I
 70 END
-110 IF (COUNT >= FIBMAX) THEN RETURN
+110 IF COUNT = FIBMAX THEN RETURN
 120 LET Z(COUNT) = X + Y
 130 LET X = Y
 140 LET Y = Z(COUNT)
