@@ -162,9 +162,9 @@ class BinsicPreprocessor {
 		matchedPause, matchedRand, dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
-		"LN", "PI", "SIN", "SQR", "TAN"]
+		"LN", "PI", "SIN", "SQR", "TAN", "RND", "INT"]
 	def mathReplace = ["abs", "acos", "asin", "atan", "cos", "exp",
-		"log", "PI", "sin", "sqrt", "tan"]
+		"log", "PI", "sin", "sqrt", "tan", "random()"]
 	
 	def partMathOne = "(([^\"]|(\"[^\"]*\"))+)"
 	
