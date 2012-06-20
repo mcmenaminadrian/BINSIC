@@ -19,7 +19,7 @@ class BinsicWindow {
 		swinger = new SwingBuilder()
 		mainFrame = swinger.frame(
 			title: "Binsic is not Sinclair Instruction Code",
-			size:[640, 480],
+			size:[640, 520],
 			show:true,
 			defaultCloseOperation: WindowConstants.EXIT_ON_CLOSE){
 			borderLayout()

@@ -1,6 +1,8 @@
 package binsic
 
 import java.lang.Math
+import java.util.concurrent.CountDownLatch
+import javax.swing.*
 
 abstract class BinsicInterpreter extends Script {
 	
@@ -48,5 +50,43 @@ abstract class BinsicInterpreter extends Script {
 		def subString= binsicEngine.buildClosure(lineNo)
 		def subroutine = binsicEngine.shell.evaluate("$subString")
 		subroutine()
+	}
+	
+	
+	def clearInputs(def textIn)
+	{
+		textIn.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), null)
+		textIn.setText("")
+	}
+	
+	def waitOnInput()
+	{
+		def textIn = binsicEngine.binsicWindow.textIn
+		clearInputs(textIn)
+		def countDown = new CountDownLatch(1)
+		textIn.getInputMap().put(KeyStroke.getKeyStroke("ENTER"),
+			BinsicConstants.INPUT)
+		def inputAction = new BinsicInputAction(textIn, binsicEngine.preProc,
+			countDown)
+		textIn.getActionMap().put(BinsicConstants.INPUT, inputAction)
+		countDown.await()
+		return inputAction.result
+		
+	}
+	
+	def waitOnInputString()
+	{
+		def textIn = binsicEngine.binsicWindow.textIn
+		clearInputs(textIn)
+		def countDown = new CountDownLatch(1)
+		textIn.getInputMap().put(KeyStroke.getKeyStroke("ENTER"),
+			BinsicConstants.INPUTSTRING)
+		def inputStringAction = new BinsicInputStringAction(textIn,
+			binsicEngine.preProc, countDown)
+		textIn.getActionMap().put(BinsicConstants.INPUTSTRING,
+			inputStringAction)
+		countDown.await()
+		return inputStringAction.result
+		
 	}
 }

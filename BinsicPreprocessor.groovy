@@ -21,6 +21,8 @@ class BinsicPreprocessor {
 	def lineNo = 0
 	def shell
 	def aClosure
+	def engine
+	def textFieldIn
 	def inClosure = false
 	
 	def commands = ["^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
@@ -124,18 +126,13 @@ class BinsicPreprocessor {
 	
 	def matchedInputNum = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		matcher.each {println "Num Input match is $it"}
-		def retString = "scan = new Scanner(System.in);"
-		retString += "${matcher[0][1]} ="
-		retString += "scan.nextLine()\n"
+		def retString = "${matcher[0][1]} = waitOnInput()\n"
 		return retString
 	}
 	
 	def matchedInputStr = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		matcher.each {println "Str Input match is $it"}
-		def retString = "println 'str';String ${matcher[0][1]} ="
-		retString += "new Scanner(System.in).nextLine()\n"
+		def retString = "${matcher[0][1]} = waitOnInputString()\n"
 		return retString
 	}
 
