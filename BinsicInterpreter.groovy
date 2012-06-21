@@ -163,8 +163,21 @@ abstract class BinsicInterpreter extends Script {
 			return aString[(len - aNumber) .. (len - 1)]
 	}
 	
-	def setMid(def aString, def starting, def length, def replacement)
+	def insertInStr(def aString, def starting, def length, def replacement)
 	{
-		
+		if (length == 0)
+			return aString
+		def len = aString.size()
+		if (starting > len)
+			return aString
+		def answer = ""
+		for (i in (0..len - 1)) {
+			if (i < starting - 1 || i + 2 > (starting + len) ||
+				i + 2 > replacement.size())
+				answer += aString[i]
+			else
+				answer += replacement[i + 1 - starting]
+		}
+		return answer
 	}
 }

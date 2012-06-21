@@ -41,7 +41,8 @@ class BinsicPreprocessor {
 		/* After here all $ have become _ */
 		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)",
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)\$",
-		"^INPUT\\s([A-Z0-9]+_)", "^PAUSE\\s(.+)", "^RAND(.*)", "^MID_(\\([^()]+\\))=(.*)"]
+		"^INPUT\\s([A-Z0-9]+_)", "^PAUSE\\s(.+)", "^RAND(.*)",
+		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)"]
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -159,7 +160,10 @@ class BinsicPreprocessor {
 	
 	def matchedMid = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		matcher.each{println it}
+		matcher[0].each{println it}
+		def ans = "${matcher[0][2]} ="
+		ans += " insertInStr(${matcher[0][1]}, ${matcher[0][5]})\n"
+		return ans
 	}
 
 	def dummyMatch = { statementMatch, line->
