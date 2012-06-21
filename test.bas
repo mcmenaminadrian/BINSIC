@@ -1,4 +1,5 @@
 10 REM Fibonacci Series
+15 PRINT "Sine(", 7/100, ") is ", SIN(7/100), " and Sine(Pi) is ", SIN(PI)
 20 LET X = 0.0
 25 LET Y = 1.0
 31 PRINT "How many numbers in series?"
@@ -15,7 +16,7 @@
 70 SCROLL
 80 SCROLL
 90 FOR Q = 0 TO PI * 100
-100 PRINT "SIN(", Q, ") is ", SIN(Q/100)
+100 PRINT "SIN(", Q/100, ") is ", SIN(Q/100), " and SIN(PI) is ", SIN(PI)
 105 NEXT Q
 110 IF COUNT = FIBMAX THEN RETURN
 120 LET Z(COUNT) = X + Y

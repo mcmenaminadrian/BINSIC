@@ -162,11 +162,9 @@ class BinsicPreprocessor {
 		matchedPause, matchedRand, dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
-		"LN", "PI", "SIN", "SQR", "TAN", "RND", "INT"]
+		"LN", "PI", "SIN", "SQR", "TAN", "RND"]
 	def mathReplace = ["abs", "acos", "asin", "atan", "cos", "exp",
 		"log", "PI", "sin", "sqrt", "tan", "random()"]
-	
-	def partMathOne = "(([^\"]|(\"[^\"]*\"))+)"
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
@@ -191,12 +189,8 @@ class BinsicPreprocessor {
 					complexCom, lineOut)
 		}
 		mathBuilder.eachWithIndex {mathsElement, index ->
-			def mathsCommand = "${partMathOne}(${mathsElement})(.*)"
-			if (lineOut =~ mathsCommand) {
-				def matcher = (lineOut =~ mathsCommand)
-				lineOut =
-				"${matcher[0][1]}Math.${mathReplace[index]}${matcher[0][5]}"
-			}
+			lineOut = lineOut.replaceAll(mathsElement, 
+				"Math.${mathReplace[index]}")
 		}
 		return lineOut
 	}
