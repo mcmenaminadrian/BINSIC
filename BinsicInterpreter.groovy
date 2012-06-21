@@ -121,4 +121,50 @@ abstract class BinsicInterpreter extends Script {
 	{
 		return i as Integer
 	}
+	
+	def getLeft(def aString, def aNumber)
+	{
+		if (aNumber == 0)
+			return ""
+		if (aNumber >= aString.size() - 1)
+			return aString
+		return aString[0..(aNumber - 1)]
+	}
+	
+	def getMid(def aString, def aNumber)
+	{
+		if (aNumber == 0)
+			return ""
+		def len = aString.size()
+		if (aNumber >= len - 1)
+			return aString
+		else
+			return aString[(aNumber - 1) .. (len - 1)]
+	}
+	
+	def getMid(def aString, def aNumber, def aLength)
+	{
+		def endPoint
+		if (aNumber - 1 + aLength > aString.size())
+			endPoint = aString.size() - 1
+		else
+			endPoint = aNumber + aLength - 1
+		return aString[(aNumber - 1) .. endPoint]
+	}
+	
+	def getRight(def aString, def aNumber)
+	{
+		if (aNumber == 0)
+			return ""
+		def len = aString.size()
+		if (aNumber > len)
+			return aString
+		else
+			return aString[(len - aNumber) .. (len - 1)]
+	}
+	
+	def setMid(def aString, def starting, def length, def replacement)
+	{
+		
+	}
 }

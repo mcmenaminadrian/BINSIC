@@ -41,7 +41,7 @@ class BinsicPreprocessor {
 		/* After here all $ have become _ */
 		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)",
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)\$",
-		"^INPUT\\s([A-Z0-9]+_)", "^PAUSE\\s(.+)", "^RAND(.*)"]
+		"^INPUT\\s([A-Z0-9]+_)", "^PAUSE\\s(.+)", "^RAND(.*)", "^MID_(\\([^()]+\\))=(.*)"]
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -101,8 +101,13 @@ class BinsicPreprocessor {
 	}
 	
 	def matchedDollar = {statementMatch, line->
-		def matcher = (line =~ statementMatch)
-		return "${matcher[0][1]}${matcher[0][2]}_${matcher[0][3]}"
+		def outLine = line
+		while (outLine =~ statementMatch)
+		{
+			def matcher = (outLine =~ statementMatch)
+			outLine = "${matcher[0][1]}${matcher[0][2]}_${matcher[0][3]}"
+		}
+		return outLine
 	}
 	
 	def matchedArray = {statementMatch, line->
@@ -151,6 +156,11 @@ class BinsicPreprocessor {
 			seed = matcher[0][1] as Integer
 		return "randomize($seed)"
 	}
+	
+	def matchedMid = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		matcher.each{println it}
+	}
 
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
@@ -159,15 +169,17 @@ class BinsicPreprocessor {
 	def complexCommandClosures = [matchedIf, matchedElse, matchedFor,
 		matchedDim, matchedDollar, matchedArray, matchedArray,
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
-		matchedPause, matchedRand, dummyMatch]
+		matchedPause, matchedRand, matchedMid, dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
 		"LN", "PI", "SIN", "SQR", "TAN", "RND"]
 	def mathReplace = ["abs", "acos", "asin", "atan", "cos", "exp",
 		"log", "PI", "sin", "sqrt", "tan", "random()"]
 	
-	def oddments = ["AND", "CHR_", "INT"]
-	def oddReplace = ["&&", "charIt", "intIt"]
+	def oddments = ["AND", "CHR_", "INT", "NOT", "OR", "TO", "LEFT_",
+		"MID_", "RIGHT_"]
+	def oddReplace = ["&&", "charIt", "intIt", "!", "||", "..", "getLeft",
+		"getMid", "getRight"]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
