@@ -1,27 +1,11 @@
-10 REM Fibonacci Series
-15 PRINT "Sine(", 7/100, ") is ", SIN(7/100), " and Sine(Pi) is ", SIN(PI)
-20 LET X = 0.0
-25 LET Y = 1.0
-31 PRINT "How many numbers in series?"
-32 INPUT FIBMAX
-35 PRINT "Thanks"
-40 LET COUNT = 0
-42 LET ZZ = ABS(COUNT)
-45 PRINT "COS value is ", COS(ZZ) * PI + SIN(0.5)
-50 DIM Z(FIBMAX)
-60 GOSUB 110
-62 FOR I = 1 TO FIBMAX
-64 PRINT "Fibonacci number ", I, " is ", Z(I - 1)
-66 NEXT I
-70 SCROLL
-80 SCROLL
-90 FOR Q = 0 TO PI * 100
-100 PRINT "SIN(", Q/100, ") is ", SIN(Q/100), " and SIN(PI) is ", SIN(PI)
-105 NEXT Q
-110 IF COUNT = FIBMAX THEN RETURN
-120 LET Z(COUNT) = X + Y
-130 LET X = Y
-140 LET Y = Z(COUNT)
-160 LET COUNT = COUNT + 1
-170 GOSUB 110
-
+10 REM Some Testing code
+20 LET X = 0
+30 LET Y = 1
+40 LET Z = X AND Y
+50 LET A = 100
+60 PRINT "Z is ", Z, "Z = ",X," AND", Y
+70 FOR I = A TO 0 STEP -1
+75 PRINT I,": ", SIN(I)," ",TAN(I)
+80 IF SIN(I) > 0.5 AND TAN(I) > 0.75 THEN PRINT "BIG" ELSE PRINT "SMALL: ", CHR$(ABS(TAN(I)))
+85 PRINT "Tan(I) is ", TAN(I), " and integer value is ", INT(TAN(I)) 
+90 NEXT I

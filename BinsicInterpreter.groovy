@@ -111,4 +111,14 @@ abstract class BinsicInterpreter extends Script {
 		else
 			randomNumberGenerator = new Random(seed)
 	}
+	
+	def charIt(def c)
+	{
+		return Character.toChars(c as Integer)
+	}
+	
+	def intIt(def i)
+	{
+		return i as Integer
+	}
 }

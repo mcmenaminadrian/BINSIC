@@ -166,6 +166,9 @@ class BinsicPreprocessor {
 	def mathReplace = ["abs", "acos", "asin", "atan", "cos", "exp",
 		"log", "PI", "sin", "sqrt", "tan", "random()"]
 	
+	def oddments = ["AND", "CHR_", "INT"]
+	def oddReplace = ["&&", "charIt", "intIt"]
+	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
 		def progLine = (lineOut =~/^[0-9]+/)
@@ -191,6 +194,10 @@ class BinsicPreprocessor {
 		mathBuilder.eachWithIndex {mathsElement, index ->
 			lineOut = lineOut.replaceAll(mathsElement, 
 				"Math.${mathReplace[index]}")
+		}
+		oddments.eachWithIndex {oddBits, index->
+			if (lineOut =~ oddBits)
+				lineOut = lineOut.replaceAll(oddBits, oddReplace[index])
 		}
 		return lineOut
 	}
