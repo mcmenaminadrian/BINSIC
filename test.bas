@@ -1,6 +1,6 @@
 10 REM Some Testing code
-20 FOR I = 1 TO 100
-30 A$ = INKEY$
-40 PRINT "You typed ", A$
-50 PAUSE 25
-60 NEXT I
+20 LET A$ = "100"
+30 LET B = PI
+40 PRINT "First is", VAL A$
+50 PRINT "Second is ", STR$(B)
+60 PRINT "Third is ", VAL (A$) + STR$(B * 5)

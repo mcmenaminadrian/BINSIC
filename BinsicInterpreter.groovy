@@ -198,4 +198,15 @@ abstract class BinsicInterpreter extends Script {
 	{
 		return keyMonitor.getCurrentKey()
 	}
+	
+	def val(String aString)
+	{
+		return aString.toBigDecimal()
+	}
+	
+	def stringify(def aNumber)
+	{
+		BigDecimal aBigDecimal = new BigDecimal(aNumber)
+		return aBigDecimal.toString()
+	}
 }

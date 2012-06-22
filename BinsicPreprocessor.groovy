@@ -42,7 +42,8 @@ class BinsicPreprocessor {
 		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)",
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)\$",
 		"^INPUT\\s([A-Z0-9]+_)", "^PAUSE\\s(.+)", "^RAND(.*)",
-		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)"]
+		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
+		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)"]
 	
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
@@ -160,10 +161,18 @@ class BinsicPreprocessor {
 	
 	def matchedMid = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		matcher[0].each{println it}
 		def ans = "${matcher[0][2]} ="
 		ans += " insertInStr(${matcher[0][1]}, ${matcher[0][5]})\n"
 		return ans
+	}
+	
+	def matchedVal = {statementMatch, line->
+		def lineOut = line
+		while (line =~ statementMatch) {
+			def matcher = (line =~ statementMatch)
+			line = "${matcher[0][1]} val(${matcher[0][2]}) ${matcher[0][3]}"
+		}
+		return line
 	}
 
 	def dummyMatch = { statementMatch, line->
@@ -173,7 +182,7 @@ class BinsicPreprocessor {
 	def complexCommandClosures = [matchedIf, matchedElse, matchedFor,
 		matchedDim, matchedDollar, matchedArray, matchedArray,
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
-		matchedPause, matchedRand, matchedMid, dummyMatch]
+		matchedPause, matchedRand, matchedMid, matchedVal, dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
 		"LN", "PI", "SIN", "SQR", "TAN", "RND"]
@@ -181,9 +190,9 @@ class BinsicPreprocessor {
 		"log", "PI", "sin", "sqrt", "tan", "random()"]
 	
 	def oddments = ["AND", "CHR_", "INT", "NOT", "OR", "TO", "LEFT_",
-		"MID_", "RIGHT_", "CODE", "INKEY_"]
+		"MID_", "RIGHT_", "CODE", "INKEY_", "STR_"]
 	def oddReplace = ["&&", "charIt", "intIt", "!", "||", "..", "getLeft",
-		"getMid", "getRight", "code", "inkey()"]
+		"getMid", "getRight", "code", "inkey()", "stringify"]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
@@ -283,4 +292,6 @@ class BinsicPreprocessor {
 		binsicOut = File.createTempFile("${System.nanoTime()}", null)
 		binsicOut.write "package binsic\n"
 	}
+	
+
 }
