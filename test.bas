@@ -1,7 +1,10 @@
 10 REM Testing Plotting
-20 FOR X = 0 TO 31
-30 LET Y = SIN(X/10)
-40 PLOT (X, 11 - Y * 11)
+20 FOR X = 0 TO 3000
+30 LET Y = SIN(X/100)
+35 LET Z = COS(X/100)
+40 PLOT (X/100, 11 - Y * 11)
+45 PLOT (X/100, 11 - Z * 11)
+47 PAUSE 5
 50 NEXT X
 60 PRINT "So how was that?"
 70 INPUT Z

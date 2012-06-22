@@ -17,6 +17,7 @@ class BinsicEngine{
 	def conf
 	def shell
 	def basic
+	def debug = false
 	
 	BinsicEngine()
 	{
@@ -45,6 +46,7 @@ class BinsicEngine{
 		conf.setScriptBaseClass("BinsicInterpreter")
 		shell = new GroovyShell(conf)
 		preProc = BinsicPreprocessor.getCurrentPreproc()
+		preProc.engine = this
 		preProc.setShell(shell)
 		preProc.startUp(basic)
 		shell.evaluate(preProc.binsicOut)
@@ -52,11 +54,29 @@ class BinsicEngine{
 		System.in.withReader { println (it.readLine()) }
 	}
 }
-
-if (args) {
-	def engine = new BinsicEngine()
-	engine.process(args[0])
-}
-else
-	println "Usage: Binsic <BASIC script>"
-
+	
+	def binsicCli = new CliBuilder
+		(usage:'binsic [-d] -f <BASIC script>')
+	
+	binsicCli.d(longOpt:'debug',
+		'output generated script')
+	binsicCli.f(longOpt:'file',
+		'BASIC script to run')
+	
+	
+	def binsicParse = binsicCli.parse(args)
+	
+	if (binsicParse.u)
+		binsicCli.usage()
+	else {
+		def engine = new BinsicEngine()
+		if (binsicParse.d)
+			engine.debug = true
+		if (binsicParse.f)
+			engine.process(binsicParse.f)
+		else
+			engine.process(args[args.size() - 1])
+	}
+	
+	
+	

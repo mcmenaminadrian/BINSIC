@@ -231,7 +231,8 @@ class BinsicPreprocessor {
 	
 	def processLines = { line->
 		def outLine = processCaps(line)
-		println outLine
+		if (engine.debug)
+			println outLine
 		binsicOut.append outLine
 		binsicOut.append "\n"
 	}
@@ -239,7 +240,8 @@ class BinsicPreprocessor {
 	def buildClosure(line) 
 	{
 		def outLine = processCaps(line)
-		println "Closure line: $outLine"
+		if (engine.debug)
+			println "Closure line: $outLine"
 		aClosure += "$outLine\n"
 		if (outLine =~ "^return"){
 			aClosure += "}\n"
