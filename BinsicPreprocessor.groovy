@@ -185,9 +185,9 @@ class BinsicPreprocessor {
 		matchedPause, matchedRand, matchedMid, matchedVal, dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
-		"LN", "PI", "SIN", "SQR", "TAN", "RND"]
+		"LN", "PI", "SIN", "SQR", "TAN", "RND", "SGN"]
 	def mathReplace = ["abs", "acos", "asin", "atan", "cos", "exp",
-		"log", "PI", "sin", "sqrt", "tan", "random()"]
+		"log", "PI", "sin", "sqrt", "tan", "random()", "signum"]
 	
 	def oddments = ["AND", "CHR_", "INT", "NOT", "OR", "TO", "LEFT_",
 		"MID_", "RIGHT_", "CODE", "INKEY_", "STR_"]
