@@ -172,8 +172,8 @@ abstract class BinsicInterpreter extends Script {
 			return aString
 		def answer = ""
 		for (i in (0..len - 1)) {
-			if (i < starting - 1 || i + 2 > (starting + len) ||
-				i + 2 > replacement.size())
+			if (i < starting - 1 || i + 2 > (starting + length) ||
+				i + 2 > replacement.size() + starting)
 				answer += aString[i]
 			else
 				answer += replacement[i + 1 - starting]
