@@ -27,9 +27,16 @@ abstract class BinsicInterpreter extends Script {
 		binsicEngine = engine
 	}
 	
+	def keepVisible()
+	{
+		def rect = textArea.modelToView(textArea.getDocument().getLength() - 1)
+		textArea.scrollRectToVisible(rect)
+	}
+	
 	def scroll()
 	{
 		textArea.append("\n")
+		keepVisible()
 	}
 	
 	def printIt(Object [] param) {
@@ -37,8 +44,7 @@ abstract class BinsicInterpreter extends Script {
 			textArea.append "$it"
 		}
 		textArea.append "\n"
-		def rect = textArea.modelToView(textArea.getDocument().getLength() - 1)
-		textArea.scrollRectToVisible(rect)
+		keepVisible()
 	}
 	
 	def cls()

@@ -25,10 +25,10 @@ class BinsicPreprocessor {
 	def textFieldIn
 	def inClosure = false
 	
-	def commands = ["^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
+	def commands = ["PRINT\$", "^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
 		"^POKE", "^PEEK", "^USR", "^CLS", "^NEXT(\\s)+[A-Z]",
 		"^RETURN", "^STOP", "^END", "^SCROLL", "<>"]
-	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
+	def processedCommands = ["scroll()", "printIt", "//", "","//FAST","//SLOW",
 		"//POKE", "//PEEK", "//USR", "cls()", "}", "return", "END",
 		"new BinsicDialog(); System.in.withReader {println (it.readLine())}",
 		"scroll()", "!="]
