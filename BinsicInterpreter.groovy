@@ -12,14 +12,15 @@ abstract class BinsicInterpreter extends Script {
 	static def binsicEngine
 	def randomNumberGenerator
 	static def keyMonitor
-	static def graphicsScreen
+	static def aFrame
+	static def grafix
 	
 	static def setTextArea(def window)
 	{
 		textArea = window
 		keyMonitor = new BinsicKeyMonitor()
 		textArea.addKeyListener(keyMonitor)
-		graphicsScreen = new BinsicPlot()
+		grafix = textArea.getGraphics()
 	}
 	
 	static def setEngine(def engine)
@@ -222,14 +223,11 @@ abstract class BinsicInterpreter extends Script {
 	
 	def plot(def x, def y)
 	{
-		
-		if (graphicsScreen.visi == false)
-			graphicsScreen.makeVisi()
-		graphicsScreen.plot(x, y)
+		grafix.fillRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
 	}
 	
 	def unplot(def x, def y)
 	{
-		graphicsScreen.unplot(x, y)
+		grafix.clearRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
 	}
 }
