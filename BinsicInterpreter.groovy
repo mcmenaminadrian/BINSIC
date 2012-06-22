@@ -1,5 +1,7 @@
 package binsic
 
+import java.awt.Point
+import java.awt.geom.Point2D
 import java.lang.Math
 import java.util.concurrent.CountDownLatch
 import javax.swing.*
@@ -10,12 +12,14 @@ abstract class BinsicInterpreter extends Script {
 	static def binsicEngine
 	def randomNumberGenerator
 	static def keyMonitor
+	static def graphicsScreen
 	
 	static def setTextArea(def window)
 	{
 		textArea = window
 		keyMonitor = new BinsicKeyMonitor()
 		textArea.addKeyListener(keyMonitor)
+		graphicsScreen = new BinsicPlot()
 	}
 	
 	static def setEngine(def engine)
@@ -208,5 +212,18 @@ abstract class BinsicInterpreter extends Script {
 	{
 		BigDecimal aBigDecimal = new BigDecimal(aNumber)
 		return aBigDecimal.toString()
+	}
+	
+	def plot(def x, def y)
+	{
+		
+		if (graphicsScreen.visi == false)
+			graphicsScreen.makeVisi()
+		graphicsScreen.plot(x, y)
+	}
+	
+	def unplot(def x, def y)
+	{
+		graphicsScreen.unplot(x, y)
 	}
 }

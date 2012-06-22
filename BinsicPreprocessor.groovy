@@ -190,9 +190,11 @@ class BinsicPreprocessor {
 		"log", "PI", "sin", "sqrt", "tan", "random()", "signum"]
 	
 	def oddments = ["AND", "CHR_", "INT", "NOT", "OR", "TO", "LEFT_",
-		"MID_", "RIGHT_", "CODE", "INKEY_", "STR_"]
+		"MID_", "RIGHT_", "CODE", "INKEY_", "STR_", "PLOT",
+		"UNPLOT"]
 	def oddReplace = ["&&", "charIt", "intIt", "!", "||", "..", "getLeft",
-		"getMid", "getRight", "code", "inkey()", "stringify"]
+		"getMid", "getRight", "code", "inkey()", "stringify", "plot",
+		"unplot"]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
@@ -292,6 +294,4 @@ class BinsicPreprocessor {
 		binsicOut = File.createTempFile("${System.nanoTime()}", null)
 		binsicOut.write "package binsic\n"
 	}
-	
-
 }
