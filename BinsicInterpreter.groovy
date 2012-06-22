@@ -180,4 +180,14 @@ abstract class BinsicInterpreter extends Script {
 		}
 		return answer
 	}
+	
+	def code(def aString)
+	{
+		if (aString.size() == 0)
+			return 0
+		else {
+			char code = aString[0]
+			return code as Integer
+		}
+	}
 }

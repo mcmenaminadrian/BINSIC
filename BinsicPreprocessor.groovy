@@ -27,11 +27,11 @@ class BinsicPreprocessor {
 	
 	def commands = ["^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
 		"^POKE", "^PEEK", "^USR", "^CLS", "^NEXT(\\s)+[A-Z]",
-		"^RETURN", "^STOP", "^END", "^SCROLL"]
+		"^RETURN", "^STOP", "^END", "^SCROLL", "<>"]
 	def processedCommands = ["printIt", "//", "","//FAST","//SLOW",
 		"//POKE", "//PEEK", "//USR", "cls()", "}", "return", "END",
 		"new BinsicDialog(); System.in.withReader {println (it.readLine())}",
-		"scroll()"]
+		"scroll()", "!="]
 
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
@@ -181,9 +181,9 @@ class BinsicPreprocessor {
 		"log", "PI", "sin", "sqrt", "tan", "random()"]
 	
 	def oddments = ["AND", "CHR_", "INT", "NOT", "OR", "TO", "LEFT_",
-		"MID_", "RIGHT_"]
+		"MID_", "RIGHT_", "CODE"]
 	def oddReplace = ["&&", "charIt", "intIt", "!", "||", "..", "getLeft",
-		"getMid", "getRight"]
+		"getMid", "getRight", "code"]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
