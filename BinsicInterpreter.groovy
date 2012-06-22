@@ -9,10 +9,13 @@ abstract class BinsicInterpreter extends Script {
 	static def textArea
 	static def binsicEngine
 	def randomNumberGenerator
+	static def keyMonitor
 	
 	static def setTextArea(def window)
 	{
 		textArea = window
+		keyMonitor = new BinsicKeyMonitor()
+		textArea.addKeyListener(keyMonitor)
 	}
 	
 	static def setEngine(def engine)
@@ -189,5 +192,10 @@ abstract class BinsicInterpreter extends Script {
 			char code = aString[0]
 			return code as Integer
 		}
+	}
+	
+	def inkey()
+	{
+		return keyMonitor.getCurrentKey()
 	}
 }

@@ -17,6 +17,7 @@ class BinsicEngine{
 	def conf
 	def shell
 	def basic
+	def interpreter
 	
 	BinsicEngine()
 	{
