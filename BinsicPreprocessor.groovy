@@ -25,19 +25,23 @@ class BinsicPreprocessor {
 	def textFieldIn
 	def inClosure = false
 	
-	def commands = ["PRINT\$", "^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
-		"^POKE", "^PEEK", "^USR", "^CLS", "^NEXT(\\s)+[A-Z]",
+	/* Order matters here so careful if editing or adding */
+	def commands = ["PRINT\$", "^PRINT", "^REM", "^LET ",
+		"^FAST", "^SLOW", "^POKE", "^PEEK", "^USR", "^CLS", 
 		"^RETURN", "^STOP", "^END", "^SCROLL", "<>", "TAB", "LEN"]
-	def processedCommands = ["scroll()", "printIt", "//", "","//FAST","//SLOW",
-		"//POKE", "//PEEK", "//USR", "cls()", "}", "return", "END",
+	def processedCommands = ["scroll()", "printIt", "//", "",
+		"//FAST","//SLOW","//POKE", "//PEEK", "//USR", "cls()", "return",
+		"END",
 		"new BinsicDialog(); System.in.withReader {println (it.readLine())}",
 		"scroll()", "!=", "tab", "sizeStr"]
 
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
 	def complexCommands = ["^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)",
+		"(.+)NEXT\\s+[A-Z](.*)", "^NEXT(\\s)+[A-Z]",
 		"(.*)(\\s)([A-Z])\\(([^\\)]+)\\)(.*)",
 		"(.*)(\\s)([A-Z]\\\$)\\(([^\\)]+)\\)(.*)",
+		/* After here IF ... THEN ... ELSE will be parsed as subclauses */
 		"${partIf}(?!(.*ELSE.*))", "${partIf}\\sELSE(.+)",
 		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
 		 "(.*)([A-Z])\\\$(.*)",
@@ -45,7 +49,7 @@ class BinsicPreprocessor {
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)",
 		"^INPUT\\s([A-Z0-9]+_)(.*)", "^PAUSE\\s(.+)", "^RAND(.*)",
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
-		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)"]
+		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.*);\$"]
 	
 
 	def matchedIf = {statementMatch, line ->
@@ -79,10 +83,17 @@ class BinsicPreprocessor {
 		return lineBack
 	}
 
-	def getDimensions = {dimString, outString->
+	def getDimensionsAccess = {dimString, outString->
 		def dimPattern = Pattern.compile("[^,]+")
 		def dimMatch = dimPattern.matcher(dimString)
 		dimMatch.each{outString += "[${it.trim()} as Integer]"}
+		return outString
+	}
+	
+	def getDimensionsDim = {dimString, outString->
+		def dimPattern = Pattern.compile("[^,]+")
+		def dimMatch = dimPattern.matcher(dimString)
+		dimMatch.each{outString += "[${it.trim()} + 1 as Integer]"}
 		return outString
 	}
 		
@@ -92,7 +103,7 @@ class BinsicPreprocessor {
 		if (matcher[0][1].size() > 1)
 			varName += "_"
 		def dimLine = "$varName = new Object"
-		dimLine += getDimensions(matcher[0][2], "")
+		dimLine += getDimensionsDim(matcher[0][2], "")
 		/* array references look like functions to Groovy so trap them */
 		BinsicInterpreter.metaClass."$varName" = {Object[] arg ->
 			def answer = "package binsic; $varName"
@@ -121,7 +132,7 @@ class BinsicPreprocessor {
 			def matcher = (outLine =~ statementMatch)
 			outLine ="${matcher[0][1]}${matcher[0][2]}"
 			outLine += "${matcher[0][3]}"
-			outLine += getDimensions(matcher[0][4], "")
+			outLine += getDimensionsAccess(matcher[0][4], "")
 			outLine += "${matcher[0][5]}"
 		}
 		return outLine
@@ -183,15 +194,31 @@ class BinsicPreprocessor {
 		}
 		return line
 	}
+	
+	def matchedAppend = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		return "appendIt( ${matcher[0][1]} )"
+	}
+	
+	def matchedNext = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		return "${matcher[0][1]} break ${matcher[0][2]}"
+	}
+	
+	def matchedFinalNext = { statementMatch, line->
+		return "}"
+	}
 
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
 	}
 		
-	def complexCommandClosures = [matchedDim, matchedArray, matchedArray,
+	def complexCommandClosures = [matchedDim, matchedNext, matchedFinalNext,
+		matchedArray, matchedArray,
 		matchedIf, matchedElse, matchedFor, matchedDollar,
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
-		matchedPause, matchedRand, matchedMid, matchedVal, dummyMatch]
+		matchedPause, matchedRand, matchedMid, matchedVal, matchedAppend,
+		dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
 		"LN", "PI", "SIN", "SQR", "TAN", "RND", "SGN"]

@@ -26,6 +26,7 @@ class BinsicEngine{
 	
 	def getTo(def lineNo)
 	{
+		println "Getting to $lineNo"
 		def fileLine = preProc.lineMap.get("$lineNo")
 		preProc.reStart(basic, fileLine as Integer)
 		shell.evaluate(preProc.binsicOut)
