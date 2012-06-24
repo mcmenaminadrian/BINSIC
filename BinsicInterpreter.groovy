@@ -109,8 +109,9 @@ abstract class BinsicInterpreter extends Script {
 		return inputStringAction.result	
 	}
 	
-	def pause(def interval)
+	def pause(def pInterval)
 	{
+		def interval = pInterval as Integer
 		if (interval > 32767){
 			return waitOnInput()
 		} else {
@@ -136,8 +137,9 @@ abstract class BinsicInterpreter extends Script {
 		return i as Integer
 	}
 	
-	def getLeft(def aString, def aNumber)
+	def getLeft(def aString, def pNumber)
 	{
+		def aNumber = pNumber as Integer
 		if (aNumber == 0)
 			return ""
 		if (aNumber >= aString.size() - 1)
@@ -145,8 +147,9 @@ abstract class BinsicInterpreter extends Script {
 		return aString[0..(aNumber - 1)]
 	}
 	
-	def getMid(def aString, def aNumber)
+	def getMid(def aString, def pNumber)
 	{
+		def aNumber = pNumber as Integer
 		if (aNumber == 0)
 			return ""
 		def len = aString.size()
@@ -156,18 +159,21 @@ abstract class BinsicInterpreter extends Script {
 			return aString[(aNumber - 1) .. (len - 1)]
 	}
 	
-	def getMid(def aString, def aNumber, def aLength)
+	def getMid(def aString, def pNumber, def pLength)
 	{
+		def aNumber = pNumber as Integer
+		def aLength = pLength as Integer
 		def endPoint
 		if (aNumber - 1 + aLength > aString.size())
 			endPoint = aString.size() - 1
 		else
-			endPoint = aNumber + aLength - 1
+			endPoint = aNumber + aLength - 2
 		return aString[(aNumber - 1) .. endPoint]
 	}
 	
-	def getRight(def aString, def aNumber)
+	def getRight(def aString, def pNumber)
 	{
+		def aNumber = pNumber as Integer
 		if (aNumber == 0)
 			return ""
 		def len = aString.size()
@@ -177,8 +183,10 @@ abstract class BinsicInterpreter extends Script {
 			return aString[(len - aNumber) .. (len - 1)]
 	}
 	
-	def insertInStr(def aString, def starting, def length, def replacement)
+	def insertInStr(def aString, def pStarting, def pLength, def replacement)
 	{
+		def starting = pStarting as Integer
+		def length = pLength as Integer
 		if (length == 0)
 			return aString
 		def len = aString.size()
@@ -229,5 +237,17 @@ abstract class BinsicInterpreter extends Script {
 	def unplot(def x, def y)
 	{
 		grafix.clearRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
+	}
+	
+	def tab(def pTabs)
+	{
+		def tabs = pTabs as Integer
+		for (i in (0..tabs * 4))
+			textArea.append(" ")
+	}
+	
+	def sizeStr(def aString)
+	{
+		return aString.size()
 	}
 }

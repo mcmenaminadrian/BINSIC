@@ -27,24 +27,27 @@ class BinsicPreprocessor {
 	
 	def commands = ["PRINT\$", "^PRINT", "^REM", "^LET ", "^FAST", "^SLOW",
 		"^POKE", "^PEEK", "^USR", "^CLS", "^NEXT(\\s)+[A-Z]",
-		"^RETURN", "^STOP", "^END", "^SCROLL", "<>"]
+		"^RETURN", "^STOP", "^END", "^SCROLL", "<>", "TAB", "LEN"]
 	def processedCommands = ["scroll()", "printIt", "//", "","//FAST","//SLOW",
 		"//POKE", "//PEEK", "//USR", "cls()", "}", "return", "END",
 		"new BinsicDialog(); System.in.withReader {println (it.readLine())}",
-		"scroll()", "!="]
+		"scroll()", "!=", "tab", "sizeStr"]
 
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
-	def complexCommands = ["${partIf}(?!(.*ELSE.*))", "${partIf}\\sELSE(.+)",
+	def complexCommands = ["^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)",
+		"(.*)(\\s)([A-Z])\\(([^\\)]+)\\)(.*)",
+		"(.*)(\\s)([A-Z]\\\$)\\(([^\\)]+)\\)(.*)",
+		"${partIf}(?!(.*ELSE.*))", "${partIf}\\sELSE(.+)",
 		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
-		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)", "(.*)([A-Z])\\\$(.*)",
+		 "(.*)([A-Z])\\\$(.*)",
 		/* After here all $ have become _ */
-		"^([A-Z])\\((.+)\\)(.*)", "^([A-Z]_)\\((.+)\\)(.*)",
-		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)\$",
-		"^INPUT\\s([A-Z0-9]+_)", "^PAUSE\\s(.+)", "^RAND(.*)",
+		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)",
+		"^INPUT\\s([A-Z0-9]+_)(.*)", "^PAUSE\\s(.+)", "^RAND(.*)",
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
 		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)"]
 	
+
 	def matchedIf = {statementMatch, line ->
 		def matcher = (line =~ statementMatch)
 		def mainClause = (matcher[0][1]).trim()
@@ -79,7 +82,7 @@ class BinsicPreprocessor {
 	def getDimensions = {dimString, outString->
 		def dimPattern = Pattern.compile("[^,]+")
 		def dimMatch = dimPattern.matcher(dimString)
-		dimMatch.each{outString += "[${it.trim()}]"}
+		dimMatch.each{outString += "[${it.trim()} as Integer]"}
 		return outString
 	}
 		
@@ -113,11 +116,15 @@ class BinsicPreprocessor {
 	}
 	
 	def matchedArray = {statementMatch, line->
-		def matcher = (line =~ statementMatch)
-		def arrayRef ="${matcher[0][1]}"
-		arrayRef += getDimensions(matcher[0][2], "")
-		arrayRef += "${matcher[0][3]}"
-		return arrayRef
+		def outLine = line
+		while (outLine =~ statementMatch) {
+			def matcher = (outLine =~ statementMatch)
+			outLine ="${matcher[0][1]}${matcher[0][2]}"
+			outLine += "${matcher[0][3]}"
+			outLine += getDimensions(matcher[0][4], "")
+			outLine += "${matcher[0][5]}"
+		}
+		return outLine
 	}
 	
 	def matchedGosub = {statementMatch, line->
@@ -134,13 +141,15 @@ class BinsicPreprocessor {
 	
 	def matchedInputNum = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		def retString = "${matcher[0][1]} = waitOnInput()"
+		def retString =
+			"${matcher[0][1]}${matcher[0][2]} = waitOnInput()"
 		return retString
 	}
 	
 	def matchedInputStr = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
-		def retString = "${matcher[0][1]} = waitOnInputString()"
+		def retString =
+			"${matcher[0][1]}${matcher[0][2]} = waitOnInputString()"
 		return retString
 	}
 	
@@ -179,8 +188,8 @@ class BinsicPreprocessor {
 		println "DUMMY"
 	}
 		
-	def complexCommandClosures = [matchedIf, matchedElse, matchedFor,
-		matchedDim, matchedDollar, matchedArray, matchedArray,
+	def complexCommandClosures = [matchedDim, matchedArray, matchedArray,
+		matchedIf, matchedElse, matchedFor, matchedDollar,
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
 		matchedPause, matchedRand, matchedMid, matchedVal, dummyMatch]
 	
