@@ -29,7 +29,7 @@ class BinsicPreprocessor {
 	def commands = ["PRINT\$", "^PRINT", "^REM", "^LET ",
 		"^FAST", "^SLOW", "^POKE", "^PEEK", "^USR", "^CLS", 
 		"^RETURN", "^STOP", "^END", "^SCROLL", "<>", "TAB", "LEN"]
-	def processedCommands = ["scroll()", "printIt", "//", "",
+	def processedCommands = ["scroll()", "printIt", "//", " ",
 		"//FAST","//SLOW","//POKE", "//PEEK", "//USR", "cls()", "return",
 		"END",
 		"new BinsicDialog(); System.in.withReader {println (it.readLine())}",
@@ -37,19 +37,20 @@ class BinsicPreprocessor {
 
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
-	def complexCommands = ["^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)",
+	def complexCommands = [
+		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)",
 		"(.+)NEXT\\s+[A-Z](.*)", "^NEXT(\\s)+[A-Z]",
 		"(.*)(\\s)([A-Z])\\(([^\\)]+)\\)(.*)",
 		"(.*)(\\s)([A-Z]\\\$)\\(([^\\)]+)\\)(.*)",
 		/* After here IF ... THEN ... ELSE will be parsed as subclauses */
 		"${partIf}(?!(.*ELSE.*))", "${partIf}\\sELSE(.+)",
 		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
-		 "(.*)([A-Z])\\\$(.*)",
+		 "(.*)([A-Z])\\\$(.*)", "printIt(.*);\$",
 		/* After here all $ have become _ */
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)",
 		"^INPUT\\s([A-Z0-9]+_)(.*)", "^PAUSE\\s(.+)", "^RAND(.*)",
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
-		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.*);\$"]
+		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)"]
 	
 
 	def matchedIf = {statementMatch, line ->
@@ -215,9 +216,9 @@ class BinsicPreprocessor {
 		
 	def complexCommandClosures = [matchedDim, matchedNext, matchedFinalNext,
 		matchedArray, matchedArray,
-		matchedIf, matchedElse, matchedFor, matchedDollar,
+		matchedIf, matchedElse, matchedFor, matchedDollar, matchedAppend, 
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
-		matchedPause, matchedRand, matchedMid, matchedVal, matchedAppend,
+		matchedPause, matchedRand, matchedMid, matchedVal,
 		dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",

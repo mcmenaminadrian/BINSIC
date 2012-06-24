@@ -116,7 +116,7 @@ abstract class BinsicInterpreter extends Script {
 	{
 		def interval = pInterval as Integer
 		if (interval > 32767){
-			return waitOnInput()
+			return waitOnInputString()
 		} else {
 			Thread.sleep(interval * 20)
 		}
@@ -164,6 +164,8 @@ abstract class BinsicInterpreter extends Script {
 	
 	def getMid(def aString, def pNumber, def pLength)
 	{
+		if (pNumber > aString.size())
+			return ""
 		def aNumber = pNumber as Integer
 		def aLength = pLength as Integer
 		def endPoint
@@ -251,6 +253,8 @@ abstract class BinsicInterpreter extends Script {
 	
 	def sizeStr(def aString)
 	{
+		if (aString == null)
+			return 0
 		return aString.size()
 	}
 }
