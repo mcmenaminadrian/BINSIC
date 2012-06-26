@@ -56,12 +56,14 @@ class BinsicEngine{
 }
 	
 	def binsicCli = new CliBuilder
-		(usage:'binsic [-d] -f <BASIC script>')
+		(usage:'binsic [-d] <BASIC script>')
 	
 	binsicCli.d(longOpt:'debug',
 		'output generated script')
 	binsicCli.f(longOpt:'file',
 		'BASIC script to run')
+	binsicCli.u(longOpt:'usage',
+		'show this usage message')
 	
 	
 	def binsicParse = binsicCli.parse(args)
@@ -77,6 +79,4 @@ class BinsicEngine{
 		else
 			engine.process(args[args.size() - 1])
 	}
-	
-	
 	
