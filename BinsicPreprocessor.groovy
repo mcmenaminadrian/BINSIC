@@ -32,7 +32,7 @@ class BinsicPreprocessor {
 	def processedCommands = ["scroll()", "printIt", "//", " ",
 		"//FAST","//SLOW","//POKE", "//PEEK", "//USR", "cls()", "return",
 		"END",
-		"new BinsicDialog(); System.in.withReader {println (it.readLine())}",
+		"{new BinsicDialog(); System.in.withReader {println (it.readLine())}}",
 		"scroll()", "!=", "tab", "sizeStr"]
 
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
