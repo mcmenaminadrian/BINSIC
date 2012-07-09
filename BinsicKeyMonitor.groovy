@@ -12,7 +12,7 @@ class BinsicKeyMonitor implements KeyListener{
 		currentKey = ""
 	}
 	void keyPressed(KeyEvent e){
-		currentKey = Character.toChars(e.keyCode & 0xFF) 
+		currentKey = new String("${Character.toChars(e.keyCode & 0xFF)}") 
 	}
 	
 	def getCurrentKey()
