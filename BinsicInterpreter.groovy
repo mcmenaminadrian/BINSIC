@@ -53,7 +53,7 @@ abstract class BinsicInterpreter extends Script {
 	
 	def cls()
 	{
-		textArea.write("")
+		textArea.setText("")
 	}
 	
 	def getTo(def lineNo)
