@@ -50,7 +50,7 @@ class BinsicPreprocessor {
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)",
 		"^INPUT\\s([A-Z0-9]+_)(.*)", "^PAUSE\\s(.+)", "^RAND(.*)",
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
-		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)"]
+		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.+)"]
 	
 
 	def matchedIf = {statementMatch, line ->
@@ -209,6 +209,15 @@ class BinsicPreprocessor {
 	def matchedFinalNext = { statementMatch, line->
 		return "}"
 	}
+	
+	def matchedPrintCommas = {statementMatch, line->
+		line = line.replaceAll(",",",\"    \",")
+		line = line.replaceAll(";",",")
+		line = line.replaceAll(",,", ",")
+		line = line.replaceAll("printIt ,", "printIt ")
+		line = line.replaceAll("printIt,", "printIt ")
+		return line
+	}
 
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
@@ -219,7 +228,7 @@ class BinsicPreprocessor {
 		matchedIf, matchedElse, matchedFor, matchedDollar, matchedAppend, 
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
 		matchedPause, matchedRand, matchedMid, matchedVal,
-		dummyMatch]
+		matchedPrintCommas, dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
 		"LN", "PI", "SIN", "SQR", "TAN", "RND", "SGN"]
