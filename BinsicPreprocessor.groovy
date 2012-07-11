@@ -214,8 +214,7 @@ class BinsicPreprocessor {
 		line = line.replaceAll(",",",\"    \",")
 		line = line.replaceAll(";",",")
 		line = line.replaceAll(",,", ",")
-		line = line.replaceAll("printIt ,", "printIt ")
-		line = line.replaceAll("printIt,", "printIt ")
+		line = line.replaceAll("printIt(\\s*),", "printIt ")
 		return line
 	}
 
