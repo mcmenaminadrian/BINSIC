@@ -1,6 +1,6 @@
 10 REM Game of Life
 20 PRINT "Conway's Game of Life"
-30 PRINT "Copyright Adrian McMenamin 2012"
+30 PRINT "Copyright Adrian McMenamin, 2012"
 35 PRINT "adrianmcmenamin@gmail.com"
 40 PRINT "Licensed under the GPL version 3"
 50 DIM A(48, 70)

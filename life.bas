@@ -1,12 +1,12 @@
 10 REM Game of Life
 20 PRINT "Conway's Game of Life"
-30 PRINT "Copyright Adrian McMenamin, 2012"
+30 PRINT "Copyright Adrian McMenamin 2012"
 35 PRINT "adrianmcmenamin@gmail.com"
 40 PRINT "Licensed under the GPL version 3"
 50 DIM A(48, 70)
 60 DIM B$(24)
 70 PRINT "Please enter your pattern"
-75 PRINT " - up to 24 line of 70 characters"
+75 PRINT " - up to 24 lines of 70 characters"
 80 FOR I = 1 TO 24
 90 INPUT B$(I)
 95 LET T = 0
@@ -32,8 +32,7 @@
 240 NEXT Q
 250 FOR Q = Z + 1 TO 70
 260 LET A(Y, Q) = 0
-262 PRINT Y + 24,
-265 LET A(Y + 24 , Q) = 0
+265 LET A(Y + 24, Q) = 0
 270 NEXT Q
 280 NEXT Y
 300 REM Display Map
@@ -65,14 +64,14 @@
 540 LET P = 0
 600 FOR M = 1 TO 24
 610 FOR N = 1 TO 70
-615 LET ZZ = 0
-617 LET SC = A(M, N)
-619 IF A(M + 24, N) = 1 THEN LET ZZ = 1
-620 LET RES = 0
-622 IF ZZ = 0 AND SC = 3 THEN LET RES = 1
-624 IF ZZ = 1 AND (SC = 2 OR SC = 3) THEN LET RES = 1
-626 LET A(M + 24, N) = RES
-630 LET P = P + RES
+611 LET ZZ = 0
+612 LET SC = A(M, N)
+612 IF A(M + 24, N) = 1 THEN LET ZZ = 1
+613 LET RES = 0
+614 IF ZZ = 0 AND SC = 3 THEN LET RES = 1
+615 IF ZZ = 1 AND (SC = 2 OR SC = 3) THEN LET RES = 1
+616 LET A(M + 24, N) = RES
+617 LET P = P + RES
 650 NEXT N
 660 NEXT M
 700 PAUSE 50000

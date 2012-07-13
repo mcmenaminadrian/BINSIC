@@ -41,9 +41,7 @@ abstract class BinsicInterpreter extends Script {
 	}
 	
 	def printIt(Object [] param) {
-		param.each { 
-			textArea.append "$it"
-		}
+		appendIt(param)
 		textArea.append "\n"
 		keepVisible()
 	}

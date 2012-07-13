@@ -38,19 +38,21 @@ class BinsicPreprocessor {
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
 	
 	def complexCommands = [
-		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)",
-		"(.+)NEXT\\s+[A-Z](.*)", "^NEXT(\\s)+[A-Z]",
-		"(.*)(\\s)([A-Z])\\(([^\\)]+)\\)(.*)",
-		"(.*)(\\s)([A-Z]\\\$)\\(([^\\)]+)\\)(.*)",
+		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)",		//creating arrays
+		"(.+)NEXT\\s+[A-Z](.*)", "^NEXT(\\s)+[A-Z]",//end of FOR .. NEXT
+		"(.*)(\\s)([A-Z])\\(([^\\)]+)\\)(.*)",  	//array referencing
+		"(.*)(\\s)([A-Z]\\\$)\\(([^\\)]+)\\)(.*)", 	//string array referencing
 		/* After here IF ... THEN ... ELSE will be parsed as subclauses */
 		"${partIf}(?!(.*ELSE.*))", "${partIf}\\sELSE(.+)",
 		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
-		 "(.*)([A-Z])\\\$(.*)", "printIt(.*);\$",
+		 "(.*)([A-Z])\\\$(.*)", 					//handle dollar sign
 		/* After here all $ have become _ */
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)",
 		"^INPUT\\s([A-Z0-9]+_)(.*)", "^PAUSE\\s(.+)", "^RAND(.*)",
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
-		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.+)"]
+		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.+)",
+		 "printIt(.*);\$"						//handle semicolon in PRINT
+		 ]
 	
 
 	def matchedIf = {statementMatch, line ->
@@ -211,10 +213,24 @@ class BinsicPreprocessor {
 	}
 	
 	def matchedPrintCommas = {statementMatch, line->
-		line = line.replaceAll(",",",\"    \",")
+		def simpleMatch = "printIt(\\s)*(.*)"
+		def simpleMatcher = (line =~ simpleMatch)
+		if (simpleMatcher) {
+			def buildingLine = "printIt "
+			def restOfLine = simpleMatcher[0][2]
+			def finalChunk = restOfLine
+			def nextComma = "((\"[^\"]*\")|[^,]*)*(,)(.*)"
+			while (restOfLine =~ nextComma) {
+				def nextCommaMatch = (restOfLine =~ nextComma)
+				buildingLine = buildingLine + nextCommaMatch[0][2]
+				buildingLine = buildingLine + ".\"    \","
+				restOfLine = nextCommaMatch[0][4]
+				finalChunk = nextCommaMatch[0][4]
+			}
+			line = buildingLine += finalChunk
+		}
 		line = line.replaceAll(";",",")
 		line = line.replaceAll(",,", ",")
-		line = line.replaceAll("printIt(\\s*),", "printIt ")
 		return line
 	}
 
@@ -224,10 +240,10 @@ class BinsicPreprocessor {
 		
 	def complexCommandClosures = [matchedDim, matchedNext, matchedFinalNext,
 		matchedArray, matchedArray,
-		matchedIf, matchedElse, matchedFor, matchedDollar, matchedAppend, 
+		matchedIf, matchedElse, matchedFor, matchedDollar, 
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
 		matchedPause, matchedRand, matchedMid, matchedVal,
-		matchedPrintCommas, dummyMatch]
+		matchedPrintCommas, matchedAppend, dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
 		"LN", "PI", "SIN", "SQR", "TAN", "RND", "SGN"]
