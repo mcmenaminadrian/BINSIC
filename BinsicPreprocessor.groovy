@@ -50,8 +50,8 @@ class BinsicPreprocessor {
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)",
 		"^INPUT\\s([A-Z0-9]+_)(.*)", "^PAUSE\\s(.+)", "^RAND(.*)",
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
-		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.+)",
-		 "printIt(.*);\$"						//handle semicolon in PRINT
+		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.*(,|;).*)",
+		 "printIt(.*),\$"						//handle semicolon in PRINT
 		 ]
 	
 
@@ -215,21 +215,20 @@ class BinsicPreprocessor {
 	def matchedPrintCommas = {statementMatch, line->
 		def simpleMatch = "printIt(\\s)*(.*)"
 		def simpleMatcher = (line =~ simpleMatch)
-		if (simpleMatcher) {
-			def buildingLine = "printIt "
-			def restOfLine = simpleMatcher[0][2]
-			def finalChunk = restOfLine
-			def nextComma = "((\"[^\"]*\")|[^,]*)*(,)(.*)"
-			while (restOfLine =~ nextComma) {
-				def nextCommaMatch = (restOfLine =~ nextComma)
-				buildingLine = buildingLine + nextCommaMatch[0][2]
-				buildingLine = buildingLine + ".\"    \","
-				restOfLine = nextCommaMatch[0][4]
-				finalChunk = nextCommaMatch[0][4]
-			}
-			line = buildingLine += finalChunk
+		def processString = simpleMatcher[0][2]
+		line = "printIt "
+		def quoteOpen = false
+		for (i in 0..processString.size() - 1) {
+			def nextChar = processString[i]
+			def addChars = new String(nextChar)
+			if (nextChar == '\"')
+				quoteOpen = !quoteOpen
+			else if (quoteOpen == false && nextChar == ',')
+				addChars = ",\"    \","
+			else if (quoteOpen == false && nextChar == ';')
+				addChars = ","
+			line += addChars
 		}
-		line = line.replaceAll(";",",")
 		line = line.replaceAll(",,", ",")
 		return line
 	}

@@ -68,7 +68,7 @@ class BinsicEngine{
 	
 	def binsicParse = binsicCli.parse(args)
 	
-	if (binsicParse.u)
+	if (binsicParse.u || args.size() == 0)
 		binsicCli.usage()
 	else {
 		def engine = new BinsicEngine()
