@@ -5,7 +5,7 @@
 40 PRINT "Licensed under the GPL version 3"
 50 DIM A(48, 70)
 60 DIM B$(24)
-70 PRINT TAB(5); "Please enter your pattern"
+70 PRINT "Please enter your pattern"
 75 PRINT " - up to 24 lines of 70 characters"
 80 FOR I = 1 TO 24
 90 INPUT B$(I)
