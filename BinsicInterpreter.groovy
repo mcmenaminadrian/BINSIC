@@ -247,8 +247,10 @@ abstract class BinsicInterpreter extends Script {
 	def tab(def pTabs)
 	{
 		def tabs = pTabs as Integer
-		for (i in (0..tabs * 4))
-			textArea.append(" ")
+		def retString = ""
+		for (i in 0..tabs - 1)
+			retString += "    "
+		return retString
 	}
 	
 	def sizeStr(def aString)

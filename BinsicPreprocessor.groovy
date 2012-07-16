@@ -26,10 +26,10 @@ class BinsicPreprocessor {
 	def inClosure = false
 	
 	/* Order matters here so careful if editing or adding */
-	def commands = ["PRINT\$", "^PRINT", "^REM", "^LET ",
+	def commands = ["PRINT\$", "^PRINT(\\s)+AT", "^PRINT", "^REM", "^LET ",
 		"^FAST", "^SLOW", "^POKE", "^PEEK", "^USR", "^CLS", 
 		"^RETURN", "^STOP", "^END", "^SCROLL", "<>", "TAB", "LEN"]
-	def processedCommands = ["scroll()", "printIt", "//", " ",
+	def processedCommands = ["scroll()", "printIt", "printIt ", "//", " ",
 		"//FAST","//SLOW","//POKE", "//PEEK", "//USR", "cls()", "return",
 		"END",
 		"{new BinsicDialog(); System.in.withReader {println (it.readLine())}}",
