@@ -259,4 +259,11 @@ abstract class BinsicInterpreter extends Script {
 			return 0
 		return aString.size()
 	}
+	
+	def setAt(def x, def y)
+	{
+		def position = getLineStartOffset(y)
+		position += x
+		return "{textArea.insert(\"x\", position)}"
+	}
 }

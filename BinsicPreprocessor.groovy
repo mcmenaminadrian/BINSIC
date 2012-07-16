@@ -26,10 +26,10 @@ class BinsicPreprocessor {
 	def inClosure = false
 	
 	/* Order matters here so careful if editing or adding */
-	def commands = ["PRINT\$", "^PRINT(\\s)+AT", "^PRINT", "^REM", "^LET ",
+	def commands = ["PRINT\$", "(\\s)+AT(\\s)+", "^PRINT", "^REM", "^LET ",
 		"^FAST", "^SLOW", "^POKE", "^PEEK", "^USR", "^CLS", 
 		"^RETURN", "^STOP", "^END", "^SCROLL", "<>", "TAB", "LEN"]
-	def processedCommands = ["scroll()", "printIt", "printIt ", "//", " ",
+	def processedCommands = ["scroll()", " setAt ", "printIt", "//", " ",
 		"//FAST","//SLOW","//POKE", "//PEEK", "//USR", "cls()", "return",
 		"END",
 		"{new BinsicDialog(); System.in.withReader {println (it.readLine())}}",
@@ -218,15 +218,23 @@ class BinsicPreprocessor {
 		def processString = simpleMatcher[0][2]
 		line = "printIt "
 		def quoteOpen = false
+		def atOpen = false
 		for (i in 0..processString.size() - 1) {
 			def nextChar = processString[i]
 			def addChars = new String(nextChar)
+			if (!quoteOpen && i + 5 < processString.size())
+				if (processString[i .. i+5] == "setAt ")
+					atOpen = true
 			if (nextChar == '\"')
 				quoteOpen = !quoteOpen
-			else if (quoteOpen == false && nextChar == ',')
+			else if (atOpen == false && quoteOpen == false && nextChar == ',')
 				addChars = ",\"    \","
 			else if (quoteOpen == false && nextChar == ';')
 				addChars = ","
+			else if (atOpen == true && nextChar == ',') {
+				addChars = ","
+				atOpen = false
+			}	
 			line += addChars
 		}
 		line = line.replaceAll(",,", ",")
