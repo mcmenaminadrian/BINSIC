@@ -46,6 +46,11 @@ abstract class BinsicInterpreter extends Script {
 		keepVisible()
 	}
 	
+	def printIt()
+	{
+		//just a holder
+	}
+	
 	def appendIt(Object [] param)
 	{
 		param.each { textArea.append "$it" }
@@ -244,6 +249,11 @@ abstract class BinsicInterpreter extends Script {
 		grafix.clearRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
 	}
 	
+	def writeString(def message, def x, def y)
+	{
+		grafix.drawString(message, x * 20, y * 20)
+	}
+	
 	def tab(def pTabs)
 	{
 		def tabs = pTabs as Integer
@@ -258,12 +268,5 @@ abstract class BinsicInterpreter extends Script {
 		if (aString == null)
 			return 0
 		return aString.size()
-	}
-	
-	def setAt(def x, def y)
-	{
-		def position = getLineStartOffset(y)
-		position += x
-		return "{textArea.insert(\"x\", position)}"
 	}
 }

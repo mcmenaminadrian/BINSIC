@@ -26,12 +26,12 @@ class BinsicPreprocessor {
 	def inClosure = false
 	
 	/* Order matters here so careful if editing or adding */
-	def commands = ["PRINT\$", "(\\s)+AT(\\s)+", "^PRINT", "^REM", "^LET ",
-		"^FAST", "^SLOW", "^POKE", "^PEEK", "^USR", "^CLS", 
-		"^RETURN", "^STOP", "^END", "^SCROLL", "<>", "TAB", "LEN"]
-	def processedCommands = ["scroll()", " setAt ", "printIt", "//", " ",
-		"//FAST","//SLOW","//POKE", "//PEEK", "//USR", "cls()", "return",
-		"END",
+	def commands = ["PRINT\$", "PRINT(\\s+)AT(\\s+)", "(\\s)+AT(\\s)+",
+		 "^PRINT", "^REM", "^LET ", "^FAST", "^SLOW", "^POKE", "^PEEK", "^USR",
+		"^CLS", "^RETURN", "^STOP", "^END", "^SCROLL", "<>", "TAB", "LEN"]
+	def processedCommands = ["scroll()", "  writeString ", " writeString ", 
+		"printIt", "//", " ",, "//FAST","//SLOW","//POKE", "//PEEK", "//USR",
+		"cls()", "return", "END",
 		"{new BinsicDialog(); System.in.withReader {println (it.readLine())}}",
 		"scroll()", "!=", "tab", "sizeStr"]
 
@@ -51,7 +51,8 @@ class BinsicPreprocessor {
 		"^INPUT\\s([A-Z0-9]+_)(.*)", "^PAUSE\\s(.+)", "^RAND(.*)",
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
 		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.*(,|;).*)",
-		 "printIt(.*),\$"						//handle semicolon in PRINT
+		 "printIt(.*),\$",						//handle semicolon in PRINT
+		 "(.*)[^{]((writeString)(\\s*)([0-9A-Z]+(\\s*),(\\s*)[0-9A-Z]+)(\\s*)(.+))"
 		 ]
 	
 
@@ -222,8 +223,8 @@ class BinsicPreprocessor {
 		for (i in 0..processString.size() - 1) {
 			def nextChar = processString[i]
 			def addChars = new String(nextChar)
-			if (!quoteOpen && i + 5 < processString.size())
-				if (processString[i .. i+5] == "setAt ")
+			if (!quoteOpen && i + 11 < processString.size())
+				if (processString[i .. i+11] == "writeString ")
 					atOpen = true
 			if (nextChar == '\"')
 				quoteOpen = !quoteOpen
@@ -240,6 +241,18 @@ class BinsicPreprocessor {
 		line = line.replaceAll(",,", ",")
 		return line
 	}
+	
+	def matchedSetAt = {statementMatch, line->
+		def outLine = line
+		while (outLine =~ statementMatch) {
+			def matcher = (outLine =~ statementMatch)
+			//matcher[0].eachWithIndex {thing, i-> println "$i is $thing"} 
+			outLine = "${matcher[0][1]} L:{${matcher[0][3]}"
+			outLine += "(${matcher[0][9]}.toString(), "
+			outLine += "${matcher[0][5]})}"
+		}
+		return outLine
+	}
 
 	def dummyMatch = { statementMatch, line->
 		println "DUMMY"
@@ -250,7 +263,7 @@ class BinsicPreprocessor {
 		matchedIf, matchedElse, matchedFor, matchedDollar, 
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
 		matchedPause, matchedRand, matchedMid, matchedVal,
-		matchedPrintCommas, matchedAppend, dummyMatch]
+		matchedPrintCommas, matchedAppend, matchedSetAt, dummyMatch]
 	
 	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
 		"LN", "PI", "SIN", "SQR", "TAN", "RND", "SGN"]
