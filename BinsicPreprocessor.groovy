@@ -246,7 +246,6 @@ class BinsicPreprocessor {
 		def outLine = line
 		while (outLine =~ statementMatch) {
 			def matcher = (outLine =~ statementMatch)
-			//matcher[0].eachWithIndex {thing, i-> println "$i is $thing"} 
 			outLine = "${matcher[0][1]} L:{${matcher[0][3]}"
 			outLine += "(${matcher[0][9]}.toString(), "
 			outLine += "${matcher[0][5]})}"
