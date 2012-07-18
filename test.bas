@@ -5,8 +5,7 @@
 40 PRINT "Licensed under the GPL version 3"
 50 DIM A(48, 70)
 60 DIM B$(24)
-70 PRINT AT 3, 10 "Please enter your pattern"
-72 PAUSE 250
+70 PRINT "Please enter your pattern"
 75 PRINT " - up to 24 lines of 70 characters"
 80 FOR I = 1 TO 24
 90 INPUT B$(I)
@@ -19,17 +18,17 @@
 150 REM Parse Input
 160 LET P = 0
 170 LET G = 0
-175 LET Y = 0
-177 LET Q = 0
+175 LET RR = 0
+177 LET NN = 0
 180 FOR Y = 1 TO 24
+185 LET RR = Y
 190 LET Z = LEN B$(Y)
 210 IF Z = 0 THEN NEXT Y
 220 FOR Q = 1 TO Z
-222 LET A(Y, Q) = 0
-225 IF MID$(B$(Y), Q, 1) = " " THEN LET A(Y + 24, Q) = 0
-230 IF MID$(B$(Y), Q, 1) <> " " THEN LET A(Y, Q) = 1
-232 IF MID$(B$(Y), Q, 1) <> " " THEN LET A(Y + 24, Q) = 1
-234 IF MID$(B$(Y), Q, 1) <> " " THEN LET P = P + 1
+225 LET NN = Q
+228 LET A(Y, Q) = 0
+230 IF MID$(B$(Y), Q, 1) = " " THEN LET A(Y + 24, Q) = 0
+235 IF MID$(B$(Y), Q, 1) <> " " THEN GOSUB 10000
 240 NEXT Q
 250 FOR Q = Z + 1 TO 70
 260 LET A(Y, Q) = 0
@@ -78,4 +77,7 @@
 700 PAUSE 50000
 800 LET G = G + 1
 900 GOTO 310
-
+10000 LET A(RR, NN) = 1
+10010 LET A(RR + 24, NN) = 1
+10020 LET P = P + 1
+10030 RETURN
