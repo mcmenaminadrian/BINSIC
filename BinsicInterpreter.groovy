@@ -13,14 +13,14 @@ abstract class BinsicInterpreter extends Script {
 	def randomNumberGenerator
 	static def keyMonitor
 	static def aFrame
-	static def grafix
+	//static def grafix
 	
 	static def setTextArea(def window)
 	{
 		textArea = window
 		keyMonitor = new BinsicKeyMonitor()
 		textArea.addKeyListener(keyMonitor)
-		grafix = textArea.getGraphics()
+	//	grafix = textArea.getGraphics()
 	}
 	
 	static def setEngine(def engine)
@@ -241,17 +241,27 @@ abstract class BinsicInterpreter extends Script {
 	
 	def plot(def x, def y)
 	{
-		grafix.fillRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
+		textArea.listCommands << "plot"
+		textArea.listCommands << x
+		textArea.listCommands << y
+	//	grafix.fillRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
 	}
 	
 	def unplot(def x, def y)
 	{
-		grafix.clearRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
+		textArea.listCommands << "unplot"
+		textArea.listCommands << x
+		textArea.listCommands << y
+		//grafix.clearRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
 	}
 	
 	def writeString(def message, def x, def y)
 	{
-		grafix.drawString(message, x * 20, y * 20)
+		textArea.listCommands << "write"
+		textArea.listCommands << message
+		textArea.listCommands << x
+		textArea.listCommands << y
+		//grafix.drawString(message, x * 20, y * 20)
 	}
 	
 	def tab(def pTabs)

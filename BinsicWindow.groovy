@@ -12,6 +12,7 @@ class BinsicWindow {
 	def mainFrame
 	def screenZX
 	def textIn
+	def scroller
 	
 	BinsicWindow(def controller)
 	{
@@ -23,10 +24,12 @@ class BinsicWindow {
 			show:true,
 			defaultCloseOperation: WindowConstants.EXIT_ON_CLOSE){
 			borderLayout()
-			scrollPane(autoscrolls:true) {
-				screenZX = textArea(rows:24, columns:32, editable:false,
-					constraints:BL.NORTH) {visble:true}
+			scroller = scrollPane(autoscrolls:true) {
+			//	screenZX = textArea(rows:24, columns:32, editable:false,
+				//	constraints:BL.NORTH) {visble:true}
 			}
+			screenZX = new BinsicTextArea(24, 32)
+			scroller.add(screenZX, BL.NORTH)
 			textIn = textField(editable:true, constraints:BL.SOUTH)
 			screenZX.setFont(new Font("Monospaced", Font.PLAIN, 18))
 		}
