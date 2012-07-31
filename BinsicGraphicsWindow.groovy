@@ -11,6 +11,7 @@ class BinsicGraphicsWindow {
 	def graphicsZX
 	def plotList = []
 	def printMap = [:]
+	def scroller
 	
 	BinsicGraphicsWindow()
 	{
@@ -18,9 +19,12 @@ class BinsicGraphicsWindow {
 		mainFrame = swinger.frame(
 			title: "BINSIC graphics pane",
 			size:[640, 520],
-			show: true)
+			show: true){
+			borderLayout()
+			scroller = scrollPane()
+		}
 		graphicsZX = new BinsicGraphicsArea(24, 32, this)
-		mainFrame.add(graphicsZX)
+		scroller.add(graphicsZX)
 		graphicsZX.setVisible(true)
 	}
 	
