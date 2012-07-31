@@ -9,18 +9,18 @@ import javax.swing.*
 abstract class BinsicInterpreter extends Script {
 	
 	static def textArea
+	static def graphicsArea
 	static def binsicEngine
 	def randomNumberGenerator
 	static def keyMonitor
 	static def aFrame
-	//static def grafix
 	
 	static def setTextArea(def window)
 	{
 		textArea = window
 		keyMonitor = new BinsicKeyMonitor()
 		textArea.addKeyListener(keyMonitor)
-	//	grafix = textArea.getGraphics()
+		graphicsArea = new BinsicGraphicsWindow()
 	}
 	
 	static def setEngine(def engine)
@@ -241,27 +241,17 @@ abstract class BinsicInterpreter extends Script {
 	
 	def plot(def x, def y)
 	{
-		textArea.listCommands << "plot"
-		textArea.listCommands << x
-		textArea.listCommands << y
-	//	grafix.fillRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
+		graphicsArea.insertPlot(x as Integer, y as Integer)
 	}
 	
 	def unplot(def x, def y)
 	{
-		textArea.listCommands << "unplot"
-		textArea.listCommands << x
-		textArea.listCommands << y
-		//grafix.clearRect(x * 20 as Integer, y * 20 as Integer, 20, 20)
+		graphicsArea.removePlot(x as Integer, y as Integer)
 	}
 	
 	def writeString(def message, def x, def y)
 	{
-		textArea.listCommands << "write"
-		textArea.listCommands << message
-		textArea.listCommands << x
-		textArea.listCommands << y
-		//grafix.drawString(message, x * 20, y * 20)
+		graphicsArea.insertPrint(x as Integer, y as Integer, message)
 	}
 	
 	def tab(def pTabs)

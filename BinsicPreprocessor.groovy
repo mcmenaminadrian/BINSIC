@@ -270,11 +270,11 @@ class BinsicPreprocessor {
 		"log", "PI", "sin", "sqrt", "tan", "random()", "signum"]
 	
 	def oddments = ["AND", "CHR_", "INT", "NOT", "OR", "TO", "LEFT_",
-		"MID_", "RIGHT_", "CODE", "INKEY_", "STR_", "PLOT",
-		"UNPLOT"]
+		"MID_", "RIGHT_", "CODE", "INKEY_", "STR_", "UNPLOT",
+		"PLOT"]
 	def oddReplace = ["&&", "charIt", "intIt", "!", "||", "..", "getLeft",
-		"getMid", "getRight", "code", "inkey()", "stringify", "plot",
-		"unplot"]
+		"getMid", "getRight", "code", "inkey()", "stringify", "unplot",
+		"plot"]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)

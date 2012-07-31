@@ -3,7 +3,7 @@ package binsic
 import groovy.swing.SwingBuilder
 import java.awt.Font
 import javax.swing.*
-import java.awt.GridBagConstraints as GBC
+import java.awt.BorderLayout as BL
 
 class BinsicWindow {
 	
@@ -25,9 +25,9 @@ class BinsicWindow {
 			borderLayout()
 			scrollPane(autoscrolls:true) {
 				screenZX = textArea(rows:24, columns:32, editable:false,
-					constraints:GBC.NORTH) {visble:true}
+					constraints:BL.NORTH) {visble:true}
 			}
-			textIn = textField(editable:true, constraints:GBC.SOUTH)
+			textIn = textField(editable:true, constraints:BL.SOUTH)
 			screenZX.setFont(new Font("Monospaced", Font.PLAIN, 18))
 		}
 	}
