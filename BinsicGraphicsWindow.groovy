@@ -12,6 +12,7 @@ class BinsicGraphicsWindow {
 	def plotList = []
 	def printMap = [:]
 	def scroller
+	def visible = false
 	
 	BinsicGraphicsWindow()
 	{
@@ -19,17 +20,20 @@ class BinsicGraphicsWindow {
 		mainFrame = swinger.frame(
 			title: "BINSIC graphics pane",
 			size:[640, 520],
-			show: true){
+			show: false){
 			borderLayout()
 			scroller = scrollPane()
 		}
 		graphicsZX = new BinsicGraphicsArea(24, 32, this)
 		scroller.add(graphicsZX)
 		graphicsZX.setVisible(true)
+		scroller.validate()
 	}
 	
 	def insertPlot(def x, def y)
 	{
+		if (!visible)
+			showGraphicsWindow()
 		def plotPoint = new Point(x, y)
 		if (plotList.contains(plotPoint))
 			return
@@ -44,8 +48,16 @@ class BinsicGraphicsWindow {
 	
 	def insertPrint(def x, def y, def string)
 	{
+		if (!visible)
+			showGraphicsWindow()
 		def printPoint = new Point(x, y)
 		printMap[printPoint] = string
+	}
+	
+	def showGraphicsWindow()
+	{
+		visible = true
+		setVisible(true)
 	}
 
 }
