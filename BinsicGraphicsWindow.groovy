@@ -3,6 +3,7 @@ package binsic
 import groovy.swing.SwingBuilder
 import java.awt.Point
 import javax.swing.*
+import java.awt.BorderLayout as BL
 
 class BinsicGraphicsWindow {
 	
@@ -20,14 +21,13 @@ class BinsicGraphicsWindow {
 		mainFrame = swinger.frame(
 			title: "BINSIC graphics pane",
 			size:[640, 520],
-			show: false){
+			show: true){
 			borderLayout()
-			scroller = scrollPane()
+			scroller = scrollPane() {
+				widget(graphicsZX = new BinsicGraphicsArea(24, 32, this),
+					constraints: BL.CENTER, visible:true)
+			}
 		}
-		graphicsZX = new BinsicGraphicsArea(24, 32, this)
-		scroller.add(graphicsZX)
-		graphicsZX.setVisible(true)
-		scroller.validate()
 	}
 	
 	def insertPlot(def x, def y)
@@ -39,11 +39,13 @@ class BinsicGraphicsWindow {
 			return
 		else
 			plotList << plotPoint
+		graphicsZX.repaint()
 	}
 	
 	def removePlot(def x, def y)
 	{
 		plotList.remove(new Point(x, y))
+		graphicsZX.repaint()
 	}
 	
 	def insertPrint(def x, def y, def string)
@@ -52,6 +54,7 @@ class BinsicGraphicsWindow {
 			showGraphicsWindow()
 		def printPoint = new Point(x, y)
 		printMap[printPoint] = string
+		graphicsZX.repaint()
 	}
 	
 	def showGraphicsWindow()

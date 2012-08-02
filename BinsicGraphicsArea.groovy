@@ -18,10 +18,10 @@ class BinsicGraphicsArea extends JTextArea {
 	{
 		super.paintComponent(g)
 		model.plotList.each {
-			g.fillRect(it, 20, 20)
+			g.fillRect(20 * it.x as Integer, 20 * it.y as Integer, 20, 20)
 		}
 		model.printMap.each {key, value->
-			g.drawString(value, key)
+			g.drawString(value, 20 * key.x as Integer, 20 * key.y as Integer)
 		}
 	}
 }
