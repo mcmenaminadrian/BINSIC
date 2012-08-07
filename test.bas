@@ -41,12 +41,9 @@
 330 PRINT
 340 PRINT "Generation ", G, " Population is ", P
 350 FOR M = 1 TO 24
-355 PRINT
 360 FOR N = 1 TO 70
-370 IF A(M + 24, N) = 1 THEN PRINT "*";
-371 IF A(M + 24, N) = 1 THEN PLOT(N, M)
-375 IF A(M + 24, N) <> 1 THEN PRINT " ";
-376 IF A(M + 24, N) <> 1 THEN UNPLOT(N, M)
+370 IF A(M + 24, N) = 1 THEN PLOT(N, M)
+375 IF A(M + 24, N) <> 1 THEN UNPLOT(N, M)
 380 NEXT N
 390 NEXT M
 400 REM Map next generation

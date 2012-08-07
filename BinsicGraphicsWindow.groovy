@@ -4,6 +4,7 @@ import groovy.swing.SwingBuilder
 import java.awt.Point
 import javax.swing.*
 import java.awt.BorderLayout as BL
+import java.util.concurrent.Semaphore
 
 class BinsicGraphicsWindow {
 	
@@ -14,14 +15,16 @@ class BinsicGraphicsWindow {
 	def printMap = [:]
 	def scroller
 	def visible = false
+	def repaintLock
 	
 	BinsicGraphicsWindow()
 	{
+		repaintLock = new Semaphore(1)
 		swinger = new SwingBuilder()
 		mainFrame = swinger.frame(
 			title: "BINSIC graphics pane",
 			size:[640, 520],
-			show: true){
+			show: false){
 			borderLayout()
 			scroller = scrollPane() {
 				widget(graphicsZX = new BinsicGraphicsArea(24, 32, this),
@@ -37,30 +40,37 @@ class BinsicGraphicsWindow {
 		def plotPoint = new Point(x, y)
 		if (plotList.contains(plotPoint))
 			return
-		else
+		else {
+			repaintLock.acquire()
 			plotList << plotPoint
+			repaintLock.release()
+		}
 		graphicsZX.repaint()
 	}
 	
 	def removePlot(def x, def y)
 	{
+		repaintLock.acquire()
 		plotList.remove(new Point(x, y))
+		repaintLock.release()
 		graphicsZX.repaint()
 	}
 	
-	def insertPrint(def x, def y, def string)
+	def insertPrint(def x, def y, def message)
 	{
 		if (!visible)
 			showGraphicsWindow()
 		def printPoint = new Point(x, y)
-		printMap[printPoint] = string
+		repaintLock.acquire()
+		printMap[printPoint] = message
+		repaintLock.release()
 		graphicsZX.repaint()
 	}
 	
 	def showGraphicsWindow()
 	{
 		visible = true
-		setVisible(true)
+		mainFrame.show()
 	}
 
 }
