@@ -29,8 +29,9 @@ class BinsicPreprocessor {
 	def commands = ["PRINT\$", "PRINT(\\s+)AT(\\s+)", "(\\s)+AT(\\s)+",
 		 "^PRINT", "^REM", "^LET ", "^FAST", "^SLOW", "^POKE", "^PEEK", "^USR",
 		"^CLS", "^RETURN", "^STOP", "^END", "^SCROLL", "<>", "TAB", "LEN"]
-	def processedCommands = ["scroll()", "  writeString ", " writeString ", 
-		"printIt", "//", " ",, "//FAST","//SLOW","//POKE", "//PEEK", "//USR",
+
+	def processedCommands = ["scroll()", "  writeString ", " writeString ",
+		"printIt", "//", " ", "//FAST", "//SLOW", "//POKE", "//PEEK", "//USR",
 		"cls()", "return", "END",
 		"{new BinsicDialog(); System.in.withReader {println (it.readLine())}}",
 		"scroll()", "!=", "tab", "sizeStr"]
