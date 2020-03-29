@@ -33,7 +33,7 @@ class BinsicPreprocessor {
 	def processedCommands = ["scroll()", "  writeString ", " writeString ",
 		"printIt", "//", " ", "//FAST", "//SLOW", "//POKE", "//PEEK", "//USR",
 		"cls()", "return", "END",
-		"{new BinsicDialog(); System.in.withReader {println (it.readLine())}}",
+		"new BinsicDialog()",
 		"scroll()", "!=", "tab", "sizeStr"]
 
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
@@ -51,10 +51,10 @@ class BinsicPreprocessor {
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)",
 		"^INPUT\\s([A-Z0-9]+_)(.*)", "^PAUSE\\s(.+)", "^RAND(.*)",
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
-		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.*(,|;).*)",
-		 "printIt(.*),\$",						//handle semicolon in PRINT
-		 "(.*)[^{]((writeString)(\\s*)([0-9A-Z]+(\\s*),(\\s*)[0-9A-Z]+)(\\s*)(.+))"
-		 ]
+		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", //"printIt(.*(,|;).*)",
+		//"printIt(.*),\$",						//handle semicolon in PRINT
+		"(.*)[^{]((writeString)(\\s*)([0-9A-Z]+(\\s*),(\\s*)[0-9A-Z]+)(\\s*)(.+))"
+		]
 	
 
 	def matchedIf = {statementMatch, line ->
@@ -158,7 +158,7 @@ class BinsicPreprocessor {
 	def matchedInputNum = {statementMatch, line->
 		def matcher = (line =~ statementMatch)
 		def retString =
-			"${matcher[0][1]}${matcher[0][2]} = waitOnInput()"
+			"${matcher[0][1]} = waitOnInput()"
 		return retString
 	}
 	
