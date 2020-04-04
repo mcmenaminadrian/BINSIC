@@ -1,7 +1,7 @@
 package binsic
 
 
-import javax.swing.*
+import javax.swing.JTextArea
 import java.awt.Graphics
 
 class BinsicTextArea extends JTextArea {

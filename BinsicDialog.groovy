@@ -2,6 +2,7 @@ package binsic
 
 import groovy.swing.SwingBuilder
 
+
 class BinsicDialog {
 
 	BinsicDialog()

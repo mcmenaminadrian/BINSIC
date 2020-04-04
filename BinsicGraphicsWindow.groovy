@@ -2,7 +2,7 @@ package binsic
 
 import groovy.swing.SwingBuilder
 import java.awt.Point
-import javax.swing.*
+//import javax.swing.
 import java.awt.BorderLayout as BL
 import java.util.concurrent.Semaphore
 

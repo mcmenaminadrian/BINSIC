@@ -1,6 +1,8 @@
 package binsic
 
-import org.codehaus.groovy.control.*
+import org.codehaus.groovy.control.CompilerConfiguration
+import groovy.cli.commons.CliBuilder
+import javax.xml.bind.JAXBContext
 
 /* 
  * BINSIC is not Sinclair Instruction Code 
