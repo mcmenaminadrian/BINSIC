@@ -37,6 +37,10 @@ class BinsicPreprocessor {
 		"scroll()", "!=", "tab", "sizeStr"]
 
 	def partIf = "^IF\\s((.(?!THEN))+)\\sTHEN\\s((.(?!ELSE))+)"
+	def partPlot = "^(PLOT)(\\s((.)*),((.)*))"
+	def partUnplot = "^(UNPLOT)(\\s((.)*),((.)*))"
+	def brackPlot = "^(PLOT)(\\((.*),(.*)\\))"
+	def brackUnplot = "^(UNPLOT)(\\((.*),(.*)\\))"
 	
 	def complexCommands = [
 		"^DIM\\s+([A-Z]\\\$?)\\s*\\((.+)\\)",		//creating arrays
@@ -45,6 +49,17 @@ class BinsicPreprocessor {
 		"(.*)(\\s)([A-Z]\\\$)\\(([^\\)]+)\\)(.*)", 	//string array referencing
 		/* After here IF ... THEN ... ELSE will be parsed as subclauses */
 		"${partIf}(?!(.*ELSE.*))", "${partIf}\\sELSE(.+)",
+		"$partPlot", "$partUnplot", "$brackPlot", "$brackUnplot",
+		"COS((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
+		"SIN((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
+		"TAN((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
+		"ACS((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
+		"ASN((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
+		"ATN((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
+		"ABS((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
+		"EXP((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
+		"LN((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
+		"SQR((\\s*[a-zA-Z]*[0-9]*[\\*]*[\\+]*[\\-]*[\\/]*[\\)]*[\\(]*\\s*)*)",
 		"^FOR(\\s)+([A-Z])(\\s)*=((.(?!TO))+)\\sTO\\s((.(?!STEP))+)((\\s)+(STEP((.)+)))*",
 		 "(.*)([A-Z])\\\$(.*)", 					//handle dollar sign
 		/* After here all $ have become _ */
@@ -82,8 +97,16 @@ class BinsicPreprocessor {
 		def startCount = matcher[0][4]
 		def endCount = matcher[0][6]
 		def lineBack = "for ($varCount in ($startCount..$endCount)"
-		if (matcher[0][11]) 
-			lineBack += ".step(${matcher[0][11].trim()})"
+		if (matcher[0][11])
+		{
+			String stepString = new String("${matcher[0][11].trim()}")
+			String bigDecStr = new String(" ")
+			lineBack = "for ($varCount in new NumberRange("
+			lineBack += "$bigDecStr"
+			lineBack += "$startCount , $bigDecStr"
+			lineBack += "$endCount , $bigDecStr$stepString"
+			lineBack += " )" 
+		}
 		lineBack += ") {"
 		return lineBack
 	}
@@ -258,24 +281,148 @@ class BinsicPreprocessor {
 		println "DUMMY"
 	}
 		
-	def complexCommandClosures = [matchedDim, matchedNext, matchedFinalNext,
+	def matchedCos = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)COS(.*)")
+		def outLine = "${preMatcher[0][1]}Math.cos("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedSin = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)SIN(.*)")
+		def outLine = "${preMatcher[0][1]}Math.sin("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedTan = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)TAN(.*)")
+		def outLine = "${preMatcher[0][1]}Math.tan("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedACos = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)ACS(.*)")
+		def outLine = "${preMatcher[0][1]}Math.acos("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedASin = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)ASN(.*)")
+		def outLine = "${preMatcher[0][1]}Math.asin("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedATan = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)ATN(.*)")
+		def outLine = "${preMatcher[0][1]}Math.atan("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedAbs = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)ABS(.*)")
+		def outLine = "${preMatcher[0][1]}Math.abs("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedExp = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)EXP(.*)")
+		def outLine = "${preMatcher[0][1]}Math.exp("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedLn = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)log(.*)")
+		def outLine = "${preMatcher[0][1]}Math.atan("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedSqr = {statementMatch, line->
+		def preMatcher = (line =~ "(.*)sqrt(.*)")
+		def outLine = "${preMatcher[0][1]}Math.atan("
+		def matcher = (line =~ statementMatch)
+		outLine += "${matcher[0][1]})"
+		return outLine
+	}
+	
+	def matchedPlot = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		def mainClause = "plot( "
+		def xClause = matcher[0][3]
+		def yClause = matcher[0][5]
+		xClause = processCaps(xClause.trim())
+		yClause = processCaps(yClause.trim())
+		return "${mainClause} ${xClause}, ${yClause})"
+	}
+	
+	def matchedUnplot = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		def mainClause = "unplot( "
+		def xClause = matcher[0][1]
+		def yClause = matcher[0][2]
+		xClause = processCaps(xClause.trim())
+		yClause = processCaps(yClause.trim())
+		return "${mainClause} ${xClause}, ${yClause})"
+	}
+	
+	def matchedBPlot = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		def mainClause = "plot("
+		def xClause = matcher[0][3]
+		def yClause = matcher[0][4]
+		xClause = processCaps(xClause.trim())
+		yClause = processCaps(yClause.trim())
+		return "${mainClause} ${xClause}, ${yClause})"
+	}
+	
+	def matchedBUnplot = {statementMatch, line->
+		def matcher = (line =~ statementMatch)
+		def mainClause = "unplot("
+		def xClause = matcher[0][3]
+		def yClause = matcher[0][4]
+		xClause = processCaps(xClause.trim())
+		yClause = processCaps(yClause.trim())
+		return "${mainClause} ${xClause}, ${yClause})"
+	}
+		
+	def complexCommandClosures = [
+		matchedDim, matchedNext, matchedFinalNext,
 		matchedArray, matchedArray,
-		matchedIf, matchedElse, matchedFor, matchedDollar, 
+		matchedIf, matchedElse, 
+		matchedPlot, matchedUnplot, matchedBPlot, matchedBUnplot,
+		matchedCos, matchedSin, matchedTan,
+		matchedACos, matchedASin, matchedATan,
+		matchedAbs, matchedExp, matchedLn, matchedSqr,
+		matchedFor, matchedDollar, 
 		matchedGosub, matchedGoto, matchedInputNum, matchedInputStr, 
 		matchedPause, matchedRand, matchedMid, matchedVal,
 		matchedPrintCommas, matchedAppend, matchedSetAt, dummyMatch]
 	
-	def mathBuilder = ["ABS", "ACS", "ASN", "ATN", "COS", "EXP",
-		"LN", "PI", "SIN", "SQR", "TAN", "RND", "SGN"]
-	def mathReplace = ["abs", "acos", "asin", "atan", "cos", "exp",
-		"log", "PI", "sin", "sqrt", "tan", "random()", "signum"]
+	def mathBuilder = [
+		"PI", "RND", "SGN"]
+	def mathReplace = [
+		"PI", "random()", "signum"]
 	
 	def oddments = ["AND", "CHR_", "INT", "NOT", "OR", "TO", "LEFT_",
-		"MID_", "RIGHT_", "CODE", "INKEY_", "STR_", "UNPLOT",
-		"PLOT"]
+		"MID_", "RIGHT_", "CODE", "INKEY_", "STR_"]
 	def oddReplace = ["&&", "charIt", "intIt", "!", "||", "..", "getLeft",
-		"getMid", "getRight", "code", "inkey()", "stringify", "unplot",
-		"plot"]
+		"getMid", "getRight", "code", "inkey()", "stringify"]
 	
 	def stripLines = {lineIn->
 		def lineOut = new String(lineIn)
@@ -375,6 +522,7 @@ class BinsicPreprocessor {
 	def setupTempFile(def name)
 	{
 		binsicOut = File.createTempFile("${System.nanoTime()}", null)
-		binsicOut.write "package binsic\n"
+		binsicOut.write "package binsic;import groovy.lang.NumberRange\n"
+		
 	}
 }
