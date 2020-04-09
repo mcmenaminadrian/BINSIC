@@ -66,8 +66,8 @@ class BinsicPreprocessor {
 		"(.*)GOSUB\\s+(.*)", "^GOTO(.+)", "^INPUT\\s((([A-Z0-9])(?!_))+)",
 		"^INPUT\\s([A-Z0-9]+_)(.*)", "^PAUSE\\s(.+)", "^RAND(.*)",
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
-		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", //"printIt(.*(,|;).*)",
-		//"printIt(.*),\$",						//handle semicolon in PRINT
+		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.*(,|;).*)",
+		"printIt(.*),\$",						//handle semicolon in PRINT
 		"(.*)[^{]((writeString)(\\s*)([0-9A-Z]+(\\s*),(\\s*)[0-9A-Z]+)(\\s*)(.+))"
 		]
 	
