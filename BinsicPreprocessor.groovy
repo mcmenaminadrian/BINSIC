@@ -524,7 +524,7 @@ class BinsicPreprocessor {
 	def setupTempFile(def name)
 	{
 		binsicOut = File.createTempFile("${System.nanoTime()}", null)
-		binsicOut.write "package binsic;import groovy.lang.NumberRange\n"
+		binsicOut.write "package binsic\n"
 		
 	}
 }
