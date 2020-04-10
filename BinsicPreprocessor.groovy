@@ -68,7 +68,7 @@ class BinsicPreprocessor {
 		"^MID_\\((([^,]+),([^,]+),([^\\)]+))\\)\\s=\\s(.*)",
 		"(.*)VAL\\s?\\(?([^)]+)\\)?(.*)", "printIt(.*(,|;).*)",
 		"printIt(.*),\$",						//handle semicolon in PRINT
-		"(.*)[^{]((writeString)(\\s*)([0-9A-Z]+(\\s*),(\\s*)[0-9A-Z]+)(\\s*)(.+))"
+		"(.*)(writeString)([^;]*)(,)([^;]*)(;)(.*)"
 		]
 	
 
@@ -270,8 +270,10 @@ class BinsicPreprocessor {
 		def outLine = line
 		while (outLine =~ statementMatch) {
 			def matcher = (outLine =~ statementMatch)
-			outLine = "${matcher[0][1]} ${matcher[0][3]}"
-			outLine += "(${matcher[0][9]}, "
+			outLine = "${matcher[0][1]} ${matcher[0][2]}("
+			def strToPrint = matcher[0][7].replaceAll(";", "+")
+			outLine += "${strToPrint}, "
+			outLine += "${matcher[0][3]},"
 			outLine += "${matcher[0][5]})"
 		}
 		return outLine
