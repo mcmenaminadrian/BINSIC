@@ -348,15 +348,15 @@ class BinsicPreprocessor {
 	}
 	
 	def matchedLn = {statementMatch, line->
-		def preMatcher = (line =~ "(.*)log(.*)")
-		def outLine = "${preMatcher[0][1]}Math.atan("
+		def preMatcher = (line =~ "(.*)LN(.*)")
+		def outLine = "${preMatcher[0][1]}Math.log("
 		def matcher = (line =~ statementMatch)
 		outLine += "${matcher[0][1]})"
 		return outLine
 	}
 	
 	def matchedSqr = {statementMatch, line->
-		def preMatcher = (line =~ "(.*)sqrt(.*)")
+		def preMatcher = (line =~ "(.*)SQRT(.*)")
 		def outLine = "${preMatcher[0][1]}Math.atan("
 		def matcher = (line =~ statementMatch)
 		outLine += "${matcher[0][1]})"
