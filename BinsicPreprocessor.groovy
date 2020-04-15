@@ -356,8 +356,8 @@ class BinsicPreprocessor {
 	}
 	
 	def matchedSqr = {statementMatch, line->
-		def preMatcher = (line =~ "(.*)SQRT(.*)")
-		def outLine = "${preMatcher[0][1]}Math.atan("
+		def preMatcher = (line =~ "(.*)SQR(.*)")
+		def outLine = "${preMatcher[0][1]}Math.sqrt("
 		def matcher = (line =~ statementMatch)
 		outLine += "${matcher[0][1]})"
 		return outLine
